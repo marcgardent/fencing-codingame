@@ -1,16 +1,27 @@
 gameloop
-read opponentRow:int opponentCol:int
-read validActionCount:int
-loop validActionCount read row:int col:int
+read myPosition:int myEnergy:int myScore:int
+read yourPosition:int yourEnergy:int yourScore:int
 write 0 0
 
 STATEMENT
-Get 3 cells in a row!
+Score 20 points!
+moves
+- idle=0     energy+1
+- forward=1  energy-1 position+50
+- backward=2 energy-1 position-50
+actions (attack)
+- idle=0     energy+1
+- basic=3    energy-3 win against idle|complex
+- standard=4 energy-4 win against idle|basic
+- complex=5  energy-5 win against idle|standard
 
 INPUT
-opponentRow: The coordinates of your opponent's last move
-validActionCount: the number of possible actions for your next move
-row: The coordinates of a possible next move
+myPosition: range [0,500], step 50, init 200|300
+myEnergy: range [0,20] init 20
+myScore: range [0,20] init 0
+yourPosition: range [0,500], step 50, init 200|300
+yourEnergy: range [0,20] init 20
+yourScore: range [0,20] init 0
 
 OUTPUT
-<row> <column>
+<move> <action>

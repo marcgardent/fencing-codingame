@@ -12,17 +12,20 @@ public class Player1 {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        int tick = 0;
         while (true) {
 
-//            //Me
-//            int myPosition = in.nextInt();
-//            int myEnergy = in.nextInt();
-//            int myScore = in.nextInt();
-//
-//            //You
-//            int yourPosition = in.nextInt();
-//            int yourEnergy = in.nextInt();
-//            int yourScore = in.nextInt();
+
+            //System.err.println(in.nextLine());
+            //Me
+            int myPosition = in.nextInt();
+            int myEnergy = in.nextInt();
+            int myScore = in.nextInt();
+
+            //You
+            int yourPosition = in.nextInt();
+            int yourEnergy = in.nextInt();
+            int yourScore = in.nextInt();
 
             int myMove = getRandom(new int[]{0, 1, 2});
             int myAction = getRandom(new int[]{0, 3, 4, 5});

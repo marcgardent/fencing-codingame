@@ -11,27 +11,39 @@ class Player {
             this.col = col;
         }
     }
-    
+
+    private static final Random random = new Random();
+
+    public static int getRandom(int[] array) {
+        int rnd = random.nextInt(array.length);
+        return array[rnd];
+    }
+
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Random random = new Random(0);
-
+        int tick = 0;
         while (true) {
-            int opponentRow = in.nextInt();
-            int opponentCol = in.nextInt();
-            int validActionCount = in.nextInt();
-            List<Action> actions = new ArrayList<>(validActionCount);
 
-            for (int i = 0; i < validActionCount; i++) {
-                int row = in.nextInt();
-                int col = in.nextInt();
-                
-                actions.add(new Action(row, col));
+            //Me
+            int myPosition = in.nextInt();
+            int myEnergy = in.nextInt();
+            int myScore = in.nextInt();
+
+            //You
+            int yourPosition = in.nextInt();
+            int yourEnergy = in.nextInt();
+            int yourScore = in.nextInt();
+
+            int myMove = getRandom(new int[]{0, 1});
+            int myAction = getRandom(new int[]{0, 3, 4, 5});
+
+            if(myEnergy <= 6) {
+                myMove = 0;
+                myAction = 0;
             }
-            
-            Action a = actions.get(random.nextInt(actions.size()));
-           
-            System.out.println(String.format("%d %d", a.row, a.col));
+
+            System.out.println(String.format("%d %d", myMove, myAction));
         }
     }
 }

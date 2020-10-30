@@ -10,14 +10,14 @@ public class PlayerState {
     public static final byte ENERGY_START = 20;
     public static final int SPAWN_POSITION_A = 200;
     public static final int SPAWN_POSITION_B = 300;
-    public static final int STEP = 10;
-    public static final int RANGE = 15;
+    public static final int STEP = 50;
+    public static final int RANGE = 30;
     public static final int MIN_POSITION = 0;
     public static final int MAX_POSITION = 500;
 
     public int Position;
     public byte Energy = ENERGY_START;
-    public byte EnergyMax;
+    public byte EnergyMax = ENERGY_MAX;
     public byte Orientation;
     public int Step = STEP;
     public int Range = RANGE;

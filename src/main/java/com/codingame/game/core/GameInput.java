@@ -13,9 +13,8 @@ public class GameInput {
     public byte Move;
     public byte Action;
 
-    public static String GetExcepted() {
-        return "<Move:0,1,2> <Action:0,3,4,5>";
-    }
+    public final static String Excepted = "[Move:0,1,2] [Action:0,3,4,5]";
+
 
     public boolean IsValid() {
         return (Move == IDLE || Move == FORWARD || Move == BACKWARD) && (Action == IDLE || Action == BASIC_ATTACK || Action == NORMAL_ATTACK || Action == COMPLEX_ATTACK);
