@@ -12,7 +12,7 @@ public interface RefereObserver {
 
     void collide();
 
-    void winTheGame(TeamState winner, TeamState looser);
+    void winTheGame();
 
     void draw();
 
@@ -20,5 +20,7 @@ public interface RefereObserver {
 
     void energyChanged(PlayerState player, int delta);
 
-    void actionResolved(PlayerState player, byte aResolved);
+    void hit(PlayerState player, byte action);
+
+    void miss(PlayerState player, byte action);
 }

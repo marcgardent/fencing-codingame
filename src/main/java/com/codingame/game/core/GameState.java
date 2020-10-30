@@ -10,4 +10,5 @@ public class GameState {
     public TeamState teamA = new TeamState();
 
     public TeamState teamB = new TeamState();
+
 }

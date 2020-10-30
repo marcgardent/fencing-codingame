@@ -15,11 +15,11 @@ public class PlayerState {
     public static final int MIN_POSITION = 0;
     public static final int MAX_POSITION = 500;
 
-    public int Position;
-    public byte Energy = ENERGY_START;
-    public byte EnergyMax = ENERGY_MAX;
-    public byte Orientation;
-    public int Step = STEP;
-    public int Range = RANGE;
+    public int position;
+    public byte energy = ENERGY_START;
+    public byte energyMax = ENERGY_MAX;
+    public byte orientation;
+    public int step = STEP;
+    public int range = RANGE;
 
 }

@@ -24,14 +24,16 @@ public class Match {
     }
 
     public GameState tick(GameInput teamA, GameInput teamB) {
+        state.teamA.messages.clear();
+        state.teamB.messages.clear();
         resolveEnergy(state.teamA, teamA);
         resolveEnergy(state.teamB, teamB);
 
         //Moves
-        resolveMove(state.teamA.Player, teamA.Move);
-        resolveMove(state.teamB.Player, teamB.Move);
+        resolveMove(state.teamA, teamA.move);
+        resolveMove(state.teamB, teamB.move);
 
-        resolveScore(teamA.Action, teamB.Action);
+        resolveScore(teamA.action, teamB.action);
 
         checkTheEnd();
 
@@ -43,17 +45,17 @@ public class Match {
 
         boolean timeout = state.tick >= Match.MAX_TICK;
 
-        if (state.teamA.Score >= TeamState.SCORE_MAX && state.teamA.Score - state.teamB.Score >= TeamState.SCORE_GAP) {
-            observer.winTheGame(state.teamA, state.teamB);
-        } else if (state.teamB.Score >= TeamState.SCORE_MAX && state.teamB.Score - state.teamA.Score >= TeamState.SCORE_GAP) {
-            observer.winTheGame(state.teamB, state.teamA);
-        } else if (timeout && state.teamA.Score > state.teamB.Score) {
-            observer.winTheGame(state.teamA, state.teamB);
-        } else if (timeout && state.teamB.Score > state.teamA.Score) {
-            observer.winTheGame(state.teamB, state.teamA);
+        if (state.teamA.score >= TeamState.SCORE_MAX && state.teamA.score - state.teamB.score >= TeamState.SCORE_GAP) {
+            observer.winTheGame();
+        } else if (state.teamB.score >= TeamState.SCORE_MAX && state.teamB.score - state.teamA.score >= TeamState.SCORE_GAP) {
+            observer.winTheGame();
+        } else if (timeout && state.teamA.score > state.teamB.score) {
+            observer.winTheGame();
+        } else if (timeout && state.teamB.score > state.teamA.score) {
+            observer.winTheGame();
         } else if (timeout) {
             observer.draw();
-        } else if (state.teamA.Player.Position >= state.teamB.Player.Position) {
+        } else if (state.teamA.player.position >= state.teamB.player.position) {
             observer.collide();
             state.restart = true;
         }
@@ -61,118 +63,147 @@ public class Match {
 
     private void resolveEnergy(TeamState team, GameInput input) {
         byte gain = 0;
-        if (input.Action == GameInput.IDLE) {
-            gain += 1;
-        } else {
-            gain -= input.Action;
-        }
-
-        if (input.Move == GameInput.IDLE) {
+        gain -= input.action;
+        if (input.move == GameInput.IDLE) {
             gain += 1;
         } else {
             gain -= 1;
         }
-        addEnergy(team.Player, gain);
+        addEnergy(team.player, gain);
 
-        if (team.Player.Energy <= 0) {
+        if (team.player.energy <= 0) {
+            team.player.energy = 0;
+            if (input.action != GameInput.IDLE)
+                team.messages.add(GameInput.getLabel(input.action) + " suppressed because of the KO");
+            if (input.action != GameInput.IDLE)
+                team.messages.add(GameInput.getLabel(input.move) + " suppressed  because of the KO");
 
-            team.Player.Energy = 0;
-            input.Action = GameInput.IDLE;
-            input.Move = GameInput.IDLE;
-            observer.playerIsKo(team.Player);
+            input.action = GameInput.IDLE;
+            input.move = GameInput.IDLE;
+            observer.playerIsKo(team.player);
         }
+        if (gain != 0) team.messages.add("energy " + (gain >= 0 ? "+" : "") + gain);
     }
 
     private void resolveScore(byte aAction, byte bAction) {
-        byte aResolved = resolveActionA(state.teamA.Player, aAction, state.teamB.Player);
-        byte bResolved = resolveActionB(state.teamB.Player, bAction, state.teamA.Player);
-
-        observer.actionResolved(state.teamA.Player, aResolved);
-        observer.actionResolved(state.teamB.Player, bResolved);
+        byte aResolved = resolveActionA(state.teamA, aAction, state.teamB.player);
+        byte bResolved = resolveActionB(state.teamB, bAction, state.teamA.player);
 
         if (aResolved != GameInput.IDLE && aResolved == bResolved) {
-            state.teamA.Score += 1;
-            state.teamB.Score += 1;
+            state.teamA.score += 1;
+            state.teamB.score += 1;
+            state.teamA.messages.add("score +1 due to an equality");
+            state.teamB.messages.add("score +1 due to an equality");
             observer.scoreAB();
 
         } else if (aResolved == GameInput.BASIC_ATTACK && bResolved == GameInput.COMPLEX_ATTACK) {
-            state.teamA.Score += 1;
+            state.teamA.score += 1;
+            state.teamA.messages.add("score +1 thanks to " + GameInput.getLabel(aResolved) + ">" + GameInput.getLabel(bResolved));
             observer.score(state.teamA);
         } else if (bResolved == GameInput.BASIC_ATTACK && aResolved == GameInput.COMPLEX_ATTACK) {
-            state.teamB.Score += 1;
+            state.teamB.score += 1;
+            state.teamB.messages.add("score +1 thanks to " + GameInput.getLabel(bResolved) + ">" + GameInput.getLabel(aResolved));
         } else if (aResolved != GameInput.IDLE || bResolved != GameInput.IDLE) {
             TeamState winner = aResolved > bResolved ? state.teamA : state.teamB;
-            winner.Score += 1;
+            winner.score += 1;
+            winner.messages.add("score +1 thanks to " + GameInput.getLabel(aResolved > bResolved ? aResolved : bResolved) + ">" + GameInput.getLabel(aResolved < bResolved ? aResolved : bResolved));
             observer.score(state.teamB);
         }
     }
 
-    private byte resolveActionA(PlayerState player, byte action, PlayerState opponent) {
+    private byte resolveActionA(TeamState team, byte action, PlayerState opponent) {
+        PlayerState player = team.player;
         if (action == GameInput.IDLE) {
             return action;
-        } else if (opponent.Position <= (player.Position + player.Orientation * player.Range)) {
+        } else if (opponent.position <= (player.position + player.orientation * player.range)) {
+            team.messages.add(GameInput.getLabel(action) + " done");
+            observer.hit(player, action);
             return action;
         } else {
+            team.messages.add(GameInput.getLabel(action) + " missed");
+            observer.miss(player, action);
             return GameInput.IDLE;
         }
     }
 
-    private byte resolveActionB(PlayerState player, byte action, PlayerState opponent) {
+    private byte resolveActionB(TeamState team, byte action, PlayerState opponent) {
+        PlayerState player = team.player;
         if (action == GameInput.IDLE) {
             return action;
-        } else if (opponent.Position >= (player.Position + player.Orientation * player.Range)) {
+        } else if (opponent.position >= (player.position + player.orientation * player.range)) {
+            team.messages.add(GameInput.getLabel(action) + " done");
+            observer.hit(player, action);
             return action;
         } else {
+            team.messages.add(GameInput.getLabel(action) + " missed");
+            observer.miss(player, action);
             return GameInput.IDLE;
         }
     }
 
-    private void resolveMove(PlayerState player, byte move) {
-        int p = player.Position;
+    private byte resolveAction(TeamState team, byte action, PlayerState opponent) {
+        PlayerState player = team.player;
+        if (action == GameInput.IDLE) {
+            return action;
+        } else if (opponent.position * opponent.orientation >= (player.position + player.orientation * player.range)) {
+            team.messages.add(GameInput.getLabel(action) + " done");
+            observer.hit(player, action);
+            return action;
+        } else {
+            team.messages.add(GameInput.getLabel(action) + " missed");
+            observer.miss(player, action);
+            return GameInput.IDLE;
+        }
+    }
+
+    private void resolveMove(TeamState team, byte move) {
+        PlayerState player = team.player;
+        int p = player.position;
         if (move == GameInput.FORWARD) {
-            p += move * player.Orientation * player.Step;
+            p += move * player.orientation * player.step;
+
         } else if (move == GameInput.BACKWARD) {
-            p -= player.Orientation * player.Step;
+            p -= player.orientation * player.step;
         }
 
         if (p >= PlayerState.MIN_POSITION && p < PlayerState.MAX_POSITION) {
-            if (p != player.Position) {
-                observer.move(player, p, player.Position);
+            if (p != player.position) {
+                observer.move(player, p, player.position);
+                team.messages.add(GameInput.getLabel(move) + " done");
             }
-            player.Position = p;
+            player.position = p;
         } else {
             observer.outside(player);
+            team.messages.add(GameInput.getLabel(move) + " suppressed due to the limits");
         }
-        //else no move
     }
 
     private void addEnergy(PlayerState player, int delta) {
-        byte total = (byte) Math.min(player.Energy + delta, player.EnergyMax);
-        if (total != player.Energy) {
+        byte total = (byte) Math.min(player.energy + delta, player.energyMax);
+        if (total != player.energy) {
             observer.energyChanged(player, delta);
-            player.Energy = total;
+            player.energy = total;
         }
     }
 
     private void initTeam(TeamState team, int spawn, byte orientation) {
-        team.Score = 0;
-        team.Player.Energy = PlayerState.ENERGY_START;
-        team.Player.Position = spawn;
-        team.Player.Orientation = orientation;
+        team.score = 0;
+        team.player.energy = PlayerState.ENERGY_START;
+        team.player.position = spawn;
+        team.player.orientation = orientation;
     }
 
     public GameState restart() {
         state.restart = false;
 
-        observer.move(state.teamA.Player, state.teamA.Player.Position, PlayerState.SPAWN_POSITION_A);
-        state.teamA.Player.Position = PlayerState.SPAWN_POSITION_A;
+        observer.move(state.teamA.player, state.teamA.player.position, PlayerState.SPAWN_POSITION_A);
+        state.teamA.player.position = PlayerState.SPAWN_POSITION_A;
 
-        observer.move(state.teamB.Player, state.teamB.Player.Position, PlayerState.SPAWN_POSITION_B);
-        state.teamB.Player.Position = PlayerState.SPAWN_POSITION_B;
+        observer.move(state.teamB.player, state.teamB.player.position, PlayerState.SPAWN_POSITION_B);
+        state.teamB.player.position = PlayerState.SPAWN_POSITION_B;
 
-        addEnergy(state.teamA.Player, 2);
-        addEnergy(state.teamA.Player, 2);
-
+        addEnergy(state.teamA.player, 2);
+        addEnergy(state.teamA.player, 2);
         checkTheEnd();
         state.tick += 1;
         return state;

@@ -35,8 +35,8 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     private long sendInputs(Player player, TeamState me, TeamState you) {
-        player.sendInputLine(me.Player.Position + " " + me.Player.Energy + " " + me.Score);
-        player.sendInputLine(you.Player.Position + " " + you.Player.Energy + " " + you.Score);
+        player.sendInputLine(me.player.position + " " + me.player.energy + " " + me.score);
+        player.sendInputLine(you.player.position + " " + you.player.energy + " " + you.score);
         long s = System.nanoTime();
         player.execute();
         s = System.nanoTime() - s;
@@ -77,8 +77,13 @@ public class Referee extends AbstractReferee implements RefereObserver {
             } else {
                 state = match.tick(A, B);
                 view.tick(state);
-                gameManager.addToGameSummary("turn=" + turn);
-                gameManager.addToGameSummary("Tick=" + state.tick);
+
+
+                String msgA = String.join(", ", state.teamA.messages);
+                String msgB = String.join(", ", state.teamB.messages);
+
+                gameManager.addToGameSummary(String.format("%s:%s", playerA.getNicknameToken(), msgA));
+                gameManager.addToGameSummary(String.format("%s:%s", playerB.getNicknameToken(), msgB));
             }
         }
     }
@@ -86,7 +91,12 @@ public class Referee extends AbstractReferee implements RefereObserver {
     private GameInput playerTurn(Player player, TeamState me, TeamState you) {
         try {
             final GameInput action = player.getAction();
-            gameManager.addToGameSummary(String.format("Player %s played (move=%d action=%d)", player.getNicknameToken(), action.Move, action.Action));
+            gameManager.addToGameSummary(
+                    String.format("Player %s played (move=%s action=%s)",
+                            player.getNicknameToken(),
+                            GameInput.getLabel(action.move),
+                            GameInput.getLabel(action.action)));
+
             return action;
         } catch (NumberFormatException e) {
             player.deactivate("Wrong output!");
@@ -100,8 +110,22 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     private void endGame() {
+        setScore();
         gameManager.endGame();
         // TODO refresh view
+    }
+
+    private void setScore() {
+        Player playerA = gameManager.getPlayer(0);
+        Player playerB = gameManager.getPlayer(1);
+
+        playerA.setScore(playerA.isActive() ? state.teamA.score : -1);
+        playerB.setScore(playerB.isActive() ? state.teamB.score : -1);
+
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(
+                "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
+                        + playerB.getNicknameToken() + "(" + playerB.getScore() + ")"
+        ));
     }
 
     @Override
@@ -133,15 +157,13 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void winTheGame(TeamState winner, TeamState losser) {
-        Player winnerP = gameManager.getPlayer(state.teamA == winner ? 0 : 1);
-        Player losserP = gameManager.getPlayer(state.teamA == losser ? 0 : 1);
-
-        winnerP.setScore(winner.Score);
-        losserP.setScore(losser.Score);
-
-        gameManager.addToGameSummary(GameManager.formatSuccessMessage(winnerP.getNicknameToken() + " won!"));
+    public void winTheGame() {
         endGame();
+    }
+
+    @Override
+    public void onEnd() {
+        setScore();
     }
 
     @Override
@@ -161,7 +183,12 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void actionResolved(PlayerState player, byte aResolved) {
-        view.actionResolved(player, aResolved);
+    public void hit(PlayerState player, byte action) {
+        view.hit(player, action);
+    }
+
+    @Override
+    public void miss(PlayerState player, byte action) {
+        view.hit(player, action);
     }
 }

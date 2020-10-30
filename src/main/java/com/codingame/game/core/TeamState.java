@@ -1,11 +1,16 @@
 package com.codingame.game.core;
 
+import java.util.LinkedList;
+
 public class TeamState {
 
     public static final byte SCORE_MAX = 20;
     public static final byte SCORE_GAP = 1;
 
-    public byte Score;
+    public byte score;
 
-    public PlayerState Player = new PlayerState();
+    public PlayerState player = new PlayerState();
+
+
+    public LinkedList<String> messages = new LinkedList<>();
 }
