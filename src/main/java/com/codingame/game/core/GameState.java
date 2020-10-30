@@ -2,12 +2,12 @@ package com.codingame.game.core;
 
 public class GameState {
 
-    public int Tick = 0;
+    public int tick = 0;
 
-    public boolean Restart = false;
+    public boolean restart = false;
 
 
-    public TeamState TeamA = new TeamState();
+    public TeamState teamA = new TeamState();
 
-    public TeamState TeamB = new TeamState();
+    public TeamState teamB = new TeamState();
 }

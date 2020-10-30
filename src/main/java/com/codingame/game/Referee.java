@@ -15,20 +15,20 @@ public class Referee extends AbstractReferee implements RefereObserver {
     @Inject
     private View view;
 
-    private GameState State;
-    private Match Match;
+    private GameState state;
+    private Match match;
     private Random random;
 
     @Override
     public void init() {
         random = new Random(gameManager.getSeed());
-        Match = new Match(this);
-        State = Match.getState();
+        match = new Match(this);
+        state = match.getState();
 
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
 
-        view.Init(State, playerA, playerB);
+        view.init(state, playerA, playerB);
 
         gameManager.setFrameDuration(250);
         gameManager.setMaxTurns(com.codingame.game.core.Match.MAX_TICK / 2);
@@ -46,21 +46,21 @@ public class Referee extends AbstractReferee implements RefereObserver {
     @Override
     public void gameTurn(int turn) {
 
-        if (State.Restart) {
-            State = Match.Restart();
-            view.Restart(State);
+        if (state.restart) {
+            state = match.restart();
+            view.restart(state);
         } else {
             Player playerA = gameManager.getPlayer(0);
             Player playerB = gameManager.getPlayer(1);
 
-            long timeoutA = sendInputs(playerA, State.TeamA, State.TeamB);
-            long timeoutB = sendInputs(playerB, State.TeamB, State.TeamA);
+            long timeoutA = sendInputs(playerA, state.teamA, state.teamB);
+            long timeoutB = sendInputs(playerB, state.teamB, state.teamA);
 
             gameManager.addToGameSummary(playerA.getNicknameToken() + "=" + timeoutA);
             gameManager.addToGameSummary(playerB.getNicknameToken() + "=" + timeoutB);
 
-            GameInput A = PlayerTurn(playerA, State.TeamA, State.TeamB);
-            GameInput B = PlayerTurn(playerB, State.TeamB, State.TeamA);
+            GameInput A = playerTurn(playerA, state.teamA, state.teamB);
+            GameInput B = playerTurn(playerB, state.teamB, state.teamA);
 
             if (A == null && B == null) {
                 playerA.setScore(-1);
@@ -75,15 +75,15 @@ public class Referee extends AbstractReferee implements RefereObserver {
                 playerB.setScore(-1);
                 endGame();
             } else {
-                State = Match.Tick(A, B);
-                view.Tick(State);
+                state = match.tick(A, B);
+                view.tick(state);
                 gameManager.addToGameSummary("turn=" + turn);
-                gameManager.addToGameSummary("Tick=" + State.Tick);
+                gameManager.addToGameSummary("Tick=" + state.tick);
             }
         }
     }
 
-    private GameInput PlayerTurn(Player player, TeamState me, TeamState you) {
+    private GameInput playerTurn(Player player, TeamState me, TeamState you) {
         try {
             final GameInput action = player.getAction();
             gameManager.addToGameSummary(String.format("Player %s played (move=%d action=%d)", player.getNicknameToken(), action.Move, action.Action));
@@ -105,37 +105,37 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void PlayerKao(PlayerState player) {
-        view.PlayerKao(player);
+    public void playerIsKo(PlayerState player) {
+        view.playerKo(player);
     }
 
     @Override
-    public void ScoreAB() {
-        view.Score(State.TeamA);
-        view.Score(State.TeamB);
+    public void scoreAB() {
+        view.score(state.teamA);
+        view.score(state.teamB);
         System.out.println(String.format("ScoreAB"));
     }
 
     @Override
-    public void Score(TeamState team) {
-        view.Score(team);
+    public void score(TeamState team) {
+        view.score(team);
         System.out.println(String.format("Score"));
     }
 
     @Override
-    public void Outside(PlayerState player) {
+    public void outside(PlayerState player) {
         System.out.println(String.format("Outside"));
     }
 
     @Override
-    public void Collide() {
+    public void collide() {
         System.out.println(String.format("Collide"));
     }
 
     @Override
-    public void WinTheGame(TeamState winner, TeamState losser) {
-        Player winnerP = gameManager.getPlayer(State.TeamA == winner ? 0 : 1);
-        Player losserP = gameManager.getPlayer(State.TeamA == losser ? 0 : 1);
+    public void winTheGame(TeamState winner, TeamState losser) {
+        Player winnerP = gameManager.getPlayer(state.teamA == winner ? 0 : 1);
+        Player losserP = gameManager.getPlayer(state.teamA == losser ? 0 : 1);
 
         winnerP.setScore(winner.Score);
         losserP.setScore(losser.Score);
@@ -145,23 +145,23 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void Draw() {
+    public void draw() {
         gameManager.addToGameSummary("Draw!");
         endGame();
     }
 
     @Override
-    public void Move(PlayerState player, int from, int to) {
-        view.Move(player, from, to);
+    public void move(PlayerState player, int from, int to) {
+        view.move(player, from, to);
     }
 
     @Override
-    public void EnergyChanged(PlayerState player, int delta) {
-        view.EnergyChanged(player, delta);
+    public void energyChanged(PlayerState player, int delta) {
+        view.energyChanged(player, delta);
     }
 
     @Override
-    public void ActionResolved(PlayerState player, byte aResolved) {
-        view.ActionResolved(player, aResolved);
+    public void actionResolved(PlayerState player, byte aResolved) {
+        view.actionResolved(player, aResolved);
     }
 }

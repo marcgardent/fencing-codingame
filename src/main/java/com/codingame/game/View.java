@@ -27,12 +27,12 @@ public class View {
 
     @Inject
     private GraphicEntityModule g;
-    private PlayerView AView;
-    private PlayerView BView;
-    private Map<PlayerState, PlayerView> viewByPlayer = new HashMap<>();
-    private Map<TeamState, PlayerView> viewByTeam = new HashMap<>();
+    private final Map<PlayerState, PlayerView> viewByPlayer = new HashMap<>();
+    private final Map<TeamState, PlayerView> viewByTeam = new HashMap<>();
+    private PlayerView aView;
+    private PlayerView bView;
 
-    public void Init(GameState state, Player playerA, Player playerB) {
+    public void init(GameState state, Player playerA, Player playerB) {
         g.createRectangle()
                 .setWidth(WIDTH).setHeight(HEIGHT)
                 .setX(0).setY(0)
@@ -80,17 +80,17 @@ public class View {
                 .setLineWidth(5).setLineColor(BLACK)
                 .setFillColor(COLOR_OFF).setZIndex(0);
 
-        AView = createPlayer(state.TeamA.Player, lightA, scoreA, playerA.getColorToken());
-        BView = createPlayer(state.TeamB.Player, lightB, scoreB, playerB.getColorToken());
-        viewByTeam.put(state.TeamA, AView);
-        viewByTeam.put(state.TeamB, BView);
-        viewByPlayer.put(state.TeamA.Player, AView);
-        viewByPlayer.put(state.TeamB.Player, BView);
-        Tick(state);
+        aView = createPlayer(state.teamA.Player, lightA, scoreA, playerA.getColorToken());
+        bView = createPlayer(state.teamB.Player, lightB, scoreB, playerB.getColorToken());
+        viewByTeam.put(state.teamA, aView);
+        viewByTeam.put(state.teamB, bView);
+        viewByPlayer.put(state.teamA.Player, aView);
+        viewByPlayer.put(state.teamB.Player, bView);
+        tick(state);
     }
 
 
-    public void Score(TeamState team) {
+    public void score(TeamState team) {
         PlayerView v = viewByTeam.get(team);
         v.Light.setFillColor(v.Color);
         g.commitEntityState(0, v.Light);
@@ -108,15 +108,15 @@ public class View {
         g.commitEntityState(1, v.Light);
     }
 
-    public void Tick(GameState state) {
+    public void tick(GameState state) {
 
-        drawPlayer(AView, state.TeamA);
-        drawPlayer(BView, state.TeamB);
+        drawPlayer(aView, state.teamA);
+        drawPlayer(bView, state.teamB);
     }
 
-    public void Restart(GameState state) {
-        restartPlayer(AView, state.TeamA);
-        restartPlayer(BView, state.TeamB);
+    public void restart(GameState state) {
+        restartPlayer(aView, state.teamA);
+        restartPlayer(bView, state.teamB);
     }
 
     private void restartPlayer(PlayerView v, TeamState state) {
@@ -199,12 +199,12 @@ public class View {
         return (int) ((float) v / (float) (PlayerState.MAX_POSITION - PlayerState.MIN_POSITION) * (float) WIDTH);
     }
 
-    public void Move(PlayerState player, int from, int to) {
+    public void move(PlayerState player, int from, int to) {
 
     }
 
 
-    public void ActionResolved(PlayerState player, byte action) {
+    public void actionResolved(PlayerState player, byte action) {
 
         PlayerView v = viewByPlayer.get(player);
         if (action == GameInput.BASIC_ATTACK) {
@@ -242,7 +242,7 @@ public class View {
 
     }
 
-    public void PlayerKao(PlayerState player) {
+    public void playerKo(PlayerState player) {
         PlayerView v = viewByPlayer.get(player);
         v.Kao.setVisible(true).setRotation(Math.PI / 20);
         g.commitEntityState(0.1, v.Kao);
@@ -254,7 +254,7 @@ public class View {
         g.commitEntityState(1, v.Kao);
     }
 
-    public void EnergyChanged(PlayerState player, int delta) {
+    public void energyChanged(PlayerState player, int delta) {
 
         PlayerView v = viewByPlayer.get(player);
         v.Energy.setText((delta > 0 ? "+" : "") + Integer.toString(delta)).setVisible(true).setAlpha(0).setStrokeColor(delta > 0 ? GREEN : RED);

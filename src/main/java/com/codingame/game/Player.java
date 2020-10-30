@@ -14,13 +14,13 @@ public class Player extends AbstractMultiplayerPlayer {
         String line = getOutputs().get(0);
         String[] output = line.split(" ");
         if (output.length != 2)
-            throw new InvalidAction("Excepted: '" + GameInput.Excepted + "' found: '" + line + "'");
+            throw new InvalidAction("Excepted: '" + GameInput.excepted + "' found: '" + line + "'");
         GameInput ret = new GameInput();
         ret.Move = Byte.parseByte(output[0]);
         ret.Action = Byte.parseByte(output[1]);
 
-        if (!ret.IsValid())
-            throw new InvalidAction("Excepted: '" + GameInput.Excepted + "' found: '" + line + "'");
+        if (!ret.isValid())
+            throw new InvalidAction("Excepted: '" + GameInput.excepted + "' found: '" + line + "'");
         return ret;
     }
 }

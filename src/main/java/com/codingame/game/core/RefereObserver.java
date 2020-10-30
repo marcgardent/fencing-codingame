@@ -2,23 +2,23 @@ package com.codingame.game.core;
 
 public interface RefereObserver {
 
-    void PlayerKao(PlayerState player);
+    void playerIsKo(PlayerState player);
 
-    void ScoreAB();
+    void scoreAB();
 
-    void Score(TeamState team);
+    void score(TeamState team);
 
-    void Outside(PlayerState player);
+    void outside(PlayerState player);
 
-    void Collide();
+    void collide();
 
-    void WinTheGame(TeamState winner, TeamState looser);
+    void winTheGame(TeamState winner, TeamState looser);
 
-    void Draw();
+    void draw();
 
-    void Move(PlayerState player, int from, int to);
+    void move(PlayerState player, int from, int to);
 
-    void EnergyChanged(PlayerState player, int delta);
+    void energyChanged(PlayerState player, int delta);
 
-    void ActionResolved(PlayerState player, byte aResolved);
+    void actionResolved(PlayerState player, byte aResolved);
 }
