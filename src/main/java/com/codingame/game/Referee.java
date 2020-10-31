@@ -18,12 +18,15 @@ public class Referee extends AbstractReferee implements RefereObserver {
     private GameState state;
     private Match match;
     private Random random;
+    private int leagueId;
 
     @Override
     public void init() {
         random = new Random(gameManager.getSeed());
+        leagueId = gameManager.getLeagueLevel() - 1;
         match = new Match(this);
         state = match.getState();
+
 
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
@@ -35,8 +38,28 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     private long sendInputs(Player player, TeamState me, TeamState you) {
-        player.sendInputLine(me.player.position + " " + me.player.energy + " " + me.score);
-        player.sendInputLine(you.player.position + " " + you.player.energy + " " + you.score);
+
+        // posture:int attitude:int position:int move:int
+        ResultType r = ResultType.CONTINUE;
+        if (me.touched && you.touched) {
+            r = ResultType.DOUBLE_TOUCH;
+        } else if (me.touched) {
+            r = ResultType.TOUCHED;
+        } else if (you.touched) {
+            r = ResultType.TOUCH;
+        }
+
+        player.sendInputLine(Integer.toString(r.code));
+        player.sendInputLine(String.format("%d %d %d %d %d",
+                me.player.getRelativePosition(),
+                me.player.posture.code, me.player.attitude.code,
+                me.player.energy, me.score));
+
+        player.sendInputLine(String.format("%d %d %d %d %d",
+                you.player.getRelativeOpponentPosition(),
+                you.player.posture.code, you.player.attitude.code,
+                you.player.energy, you.score));
+
         long s = System.nanoTime();
         player.execute();
         s = System.nanoTime() - s;
@@ -59,8 +82,8 @@ public class Referee extends AbstractReferee implements RefereObserver {
             gameManager.addToGameSummary(playerA.getNicknameToken() + "=" + timeoutA);
             gameManager.addToGameSummary(playerB.getNicknameToken() + "=" + timeoutB);
 
-            GameInput A = playerTurn(playerA, state.teamA, state.teamB);
-            GameInput B = playerTurn(playerB, state.teamB, state.teamA);
+            ActionType A = playerTurn(playerA, state.teamA, state.teamB);
+            ActionType B = playerTurn(playerB, state.teamB, state.teamA);
 
             if (A == null && B == null) {
                 playerA.setScore(-1);
@@ -88,18 +111,16 @@ public class Referee extends AbstractReferee implements RefereObserver {
         }
     }
 
-    private GameInput playerTurn(Player player, TeamState me, TeamState you) {
+    private ActionType playerTurn(Player player, TeamState me, TeamState you) {
         try {
-            final GameInput action = player.getAction();
+            final ActionType action = player.getAction(leagueId);
             gameManager.addToGameSummary(
-                    String.format("Player %s played (move=%s action=%s)",
+                    String.format("Player %s played (action=%s)",
                             player.getNicknameToken(),
-                            GameInput.getLabel(action.move),
-                            GameInput.getLabel(action.action)));
-
+                            action.name()));
             return action;
         } catch (NumberFormatException e) {
-            player.deactivate("Wrong output!");
+            player.deactivate("Wrong output, excepted:integer!");
         } catch (TimeoutException e) {
             gameManager.addToGameSummary(GameManager.formatErrorMessage(player.getNicknameToken() + " timeout!"));
             player.deactivate(player.getNicknameToken() + " timeout!");
@@ -183,12 +204,12 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void hit(PlayerState player, byte action) {
-        view.hit(player, action);
+    public void hit(PlayerState player) {
+        view.hit(player);
     }
 
     @Override
-    public void miss(PlayerState player, byte action) {
-        view.hit(player, action);
+    public void miss(PlayerState player) {
+        view.hit(player);
     }
 }

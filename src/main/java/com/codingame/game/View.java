@@ -1,6 +1,6 @@
 package com.codingame.game;
 
-import com.codingame.game.core.GameInput;
+import com.codingame.game.core.ActionType;
 import com.codingame.game.core.GameState;
 import com.codingame.game.core.PlayerState;
 import com.codingame.game.core.TeamState;
@@ -25,6 +25,13 @@ public class View {
     private static final int GREEN = 0x00FFFF;
     private static final int RED = 0xFF00FF;
     private static final int ENERGY_BAR_SIZE = 100;
+    private static final double BOTTOM_ANGLE = Math.PI / 4;
+    private static final double MIDDLE_ANGLE = 0;
+    private static final double TOP_ANGLE = -Math.PI / 4;
+    private static final double BREAK_ANGLE = Math.PI / 3;
+    private static final int ARM_DEFENSIVE = -10;
+    private static final int ARM_OFFENSIVE = 0;
+
 
     @Inject
     private GraphicEntityModule g;
@@ -70,7 +77,8 @@ public class View {
                 .setWidth(15).setHeight(40)
                 .setX(-50 + 30).setY(-160 + 5)
                 .setFillColor(BLACK).setZIndex(10);
-        int halfRange = getLogicToWorld(player.range / 2);
+
+        int halfRange = getLogicToWorld(ActionType.OFFENSIVE_ATTITUDE.offensiveRange / 2);
 
         Rectangle arm = g.createRectangle()
                 .setWidth(halfRange).setHeight(20)
@@ -91,7 +99,7 @@ public class View {
         ret.ko = g.createText("~!#?").setFillColor(WHITE).setX(-20).setY(-220).setFontFamily("Lato").setFontSize(40).setVisible(false);
         ret.energy = g.createText("+2").setFillColor(WHITE).setX(-10).setY(-260).setFontFamily("Lato")
                 .setFontSize(40).setVisible(false).setStrokeThickness(3).setFontWeight(Text.FontWeight.BOLD);
-        ret.arm = g.createGroup(arm, hand, blade).setX(-10).setY(-80).setRotation(Math.PI / 4);
+        ret.arm = g.createGroup(arm, hand, blade).setX(ARM_DEFENSIVE).setY(-80).setRotation(Math.PI / 4);
 
         Group p = g.createGroup(body, ret.ko, ret.arm, head, grid).setScaleX(player.orientation);
         Group texts = g.createGroup(ret.ko);
@@ -152,11 +160,28 @@ public class View {
         g.commitEntityState(0, v.ko);
         v.energy.setVisible(false);
         g.commitEntityState(0, v.energy);
-        v.arm.setRotation(Math.PI / 4);
-        g.commitEntityState(0, v.arm);
 
+        {
+            //posture & attitude
+            double angle = MIDDLE_ANGLE;
+            if (team.player.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
+            else if (team.player.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
+            else if (team.player.attitude == ActionType.BREAK_ATTITUDE) angle = BREAK_ANGLE;
+            v.arm.setRotation(angle);
+            v.arm.setX(ARM_DEFENSIVE);
+            g.commitEntityState(0, v.arm);
+
+            //offensive attitude
+            if (team.player.attitude == ActionType.OFFENSIVE_ATTITUDE) {
+                v.arm.setX(ARM_OFFENSIVE);
+                g.commitEntityState(0.33, v.arm);
+                v.arm.setX(ARM_DEFENSIVE);
+                g.commitEntityState(0.66, v.arm);
+                v.arm.setX(ARM_OFFENSIVE);
+                g.commitEntityState(1, v.arm);
+            }
+        }
         v.energyBar.setWidth((int) (team.player.energy / (double) team.player.energyMax * ENERGY_BAR_SIZE));
-
         v.score.setText(String.format("%1$2s", team.score).replace(' ', '0'));
         g.commitEntityState(1, v.score);
         v.character.setX(getLogicToWorld(team.player.position));
@@ -224,19 +249,8 @@ public class View {
         g.commitEntityState(1, v.Light);
     }
 
-    public void hit(PlayerState player, byte action) {
+    public void hit(PlayerState player) {
 
-        PlayerView v = viewByPlayer.get(player);
-        if (action == GameInput.BASIC_ATTACK) {
-            v.arm.setRotation(0);
-            g.commitEntityState(0.5, v.arm);
-        } else if (action == GameInput.NORMAL_ATTACK) {
-            v.arm.setRotation(-Math.PI / 8);
-            g.commitEntityState(0.5, v.arm);
-        } else if (action == GameInput.COMPLEX_ATTACK) {
-            v.arm.setRotation(-Math.PI / 4);
-            g.commitEntityState(0.5, v.arm);
-        }
     }
 
     public void playerKo(PlayerState player) {

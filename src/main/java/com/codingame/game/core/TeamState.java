@@ -11,6 +11,7 @@ public class TeamState {
 
     public PlayerState player = new PlayerState();
 
-
     public LinkedList<String> messages = new LinkedList<>();
+
+    public boolean touched = false;
 }

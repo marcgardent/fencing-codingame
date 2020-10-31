@@ -20,7 +20,7 @@ public interface RefereObserver {
 
     void energyChanged(PlayerState player, int delta);
 
-    void hit(PlayerState player, byte action);
+    void hit(PlayerState player);
 
-    void miss(PlayerState player, byte action);
+    void miss(PlayerState player);
 }
