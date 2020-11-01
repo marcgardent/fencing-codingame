@@ -1,8 +1,8 @@
 package com.codingame.game.views;
 
 import com.codingame.game.Player;
-import com.codingame.game.core.ActionType;
-import com.codingame.game.core.PlayerState;
+import com.codingame.game.models.ActionType;
+import com.codingame.game.models.PlayerModel;
 import com.codingame.gameengine.module.entities.*;
 
 public class PlayerView {
@@ -15,20 +15,20 @@ public class PlayerView {
     private static final int ARM_OFFENSIVE = 0;
 
     private final GraphicEntityModule g;
-    private final PlayerState playerState;
+    private final PlayerModel playerModel;
     private Group character;
     private int Color;
     private Group arm;
     private Text ko;
     private Text energy;
 
-    PlayerView(GraphicEntityModule g, PlayerState playerState) {
+    PlayerView(GraphicEntityModule g, PlayerModel playerState) {
         this.g = g;
-        this.playerState = playerState;
+        this.playerModel = playerState;
     }
 
 
-    public static PlayerView fromPlayer(GraphicEntityModule g, PlayerState playerState, Player player) {
+    public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerState, Player player) {
         PlayerView ret = new PlayerView(g, playerState);
         Rectangle body = g.createRectangle()
                 .setWidth(50).setHeight(100)
@@ -100,15 +100,15 @@ public class PlayerView {
         {
             //posture & attitude
             double angle = MIDDLE_ANGLE;
-            if (playerState.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
-            else if (playerState.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
-            else if (playerState.attitude == ActionType.BREAK_ATTITUDE) angle = BREAK_ANGLE;
+            if (playerModel.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
+            else if (playerModel.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
+            else if (playerModel.attitude == ActionType.BREAK_ATTITUDE) angle = BREAK_ANGLE;
             this.arm.setRotation(angle);
             this.arm.setX(ARM_DEFENSIVE);
             g.commitEntityState(0, this.arm);
 
             //offensive attitude
-            if (playerState.attitude == ActionType.OFFENSIVE_ATTITUDE) {
+            if (playerModel.attitude == ActionType.OFFENSIVE_ATTITUDE) {
                 this.arm.setX(ARM_OFFENSIVE);
                 g.commitEntityState(0.33, this.arm);
                 this.arm.setX(ARM_DEFENSIVE);
@@ -118,7 +118,7 @@ public class PlayerView {
             }
         }
 
-        this.character.setX(StageView.getLogicToWorld(playerState.position));
+        this.character.setX(StageView.getLogicToWorld(playerModel.position));
         g.commitEntityState(1, this.character);
     }
 

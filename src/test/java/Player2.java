@@ -32,6 +32,7 @@ public class Player2 {
             int yourEnergy = in.nextInt();
             int yourScore = in.nextInt();
 
+
             int myAction = getRandom(new int[]{0, 1, 2, 3, 4, 5, 6});
             System.out.printf("%d%n", myAction);
         }

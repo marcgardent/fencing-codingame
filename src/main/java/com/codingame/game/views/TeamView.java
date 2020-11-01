@@ -1,7 +1,7 @@
 package com.codingame.game.views;
 
 import com.codingame.game.Player;
-import com.codingame.game.core.TeamState;
+import com.codingame.game.models.TeamModel;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Rectangle;
 import com.codingame.gameengine.module.entities.Text;
@@ -10,7 +10,7 @@ public class TeamView {
     public static final int ENERGY_BAR_SIZE = 100;
     public final PlayerView playerView;
     private final GraphicEntityModule g;
-    private final TeamState teamState;
+    private final TeamModel teamModel;
     private final int color;
     private Text score;
     private Rectangle Light;
@@ -18,14 +18,14 @@ public class TeamView {
     private Rectangle energyBar;
 
 
-    TeamView(GraphicEntityModule g, TeamState teamState, PlayerView playerView, int color) {
+    TeamView(GraphicEntityModule g, TeamModel teamState, PlayerView playerView, int color) {
         this.g = g;
-        this.teamState = teamState;
+        this.teamModel = teamState;
         this.playerView = playerView;
         this.color = color;
     }
 
-    public static TeamView fromPlayer(GraphicEntityModule g, TeamState teamState, Player player) {
+    public static TeamView fromPlayer(GraphicEntityModule g, TeamModel teamState, Player player) {
         PlayerView v = PlayerView.fromPlayer(g, teamState.player, player);
         return new TeamView(g, teamState, v, player.getColorToken());
     }
@@ -36,9 +36,9 @@ public class TeamView {
     }
 
     public void draw() {
-        this.score.setText(String.format("%1$2s", teamState.score).replace(' ', '0'));
+        this.score.setText(String.format("%1$2s", teamModel.score).replace(' ', '0'));
         g.commitEntityState(1, this.score);
-        this.energyBar.setWidth((int) (teamState.player.energy / (double) teamState.player.energyMax * ENERGY_BAR_SIZE));
+        this.energyBar.setWidth((int) (teamModel.player.energy / (double) teamModel.player.energyMax * ENERGY_BAR_SIZE));
         playerView.draw();
     }
 

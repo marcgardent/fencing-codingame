@@ -1,9 +1,9 @@
 package com.codingame.game.views;
 
 import com.codingame.game.Player;
-import com.codingame.game.core.GameState;
-import com.codingame.game.core.PlayerState;
-import com.codingame.game.core.TeamState;
+import com.codingame.game.models.GameState;
+import com.codingame.game.models.PlayerModel;
+import com.codingame.game.models.TeamModel;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.google.inject.Inject;
 
@@ -13,8 +13,8 @@ import java.util.Map;
 public class MainView {
 
 
-    private final Map<PlayerState, TeamView> viewByPlayer = new HashMap<>();
-    private final Map<TeamState, TeamView> viewByTeam = new HashMap<>();
+    private final Map<PlayerModel, TeamView> viewByPlayer = new HashMap<>();
+    private final Map<TeamModel, TeamView> viewByTeam = new HashMap<>();
     @Inject
     private GraphicEntityModule g;
     private TeamView aView;
@@ -52,24 +52,24 @@ public class MainView {
     }
 
 
-    public void move(PlayerState player, int from, int to) {
+    public void move(PlayerModel player, int from, int to) {
 
     }
 
-    public void hit(PlayerState player) {
+    public void hit(PlayerModel player) {
         viewByPlayer.get(player).playerView.hit();
     }
 
 
-    public void playerKo(PlayerState player) {
+    public void playerKo(PlayerModel player) {
         viewByPlayer.get(player).playerView.playerKo();
     }
 
-    public void energyChanged(PlayerState player, int delta) {
+    public void energyChanged(PlayerModel player, int delta) {
         viewByPlayer.get(player).playerView.energyChanged(delta);
     }
 
-    public void scored(TeamState team) {
+    public void scored(TeamModel team) {
         viewByTeam.get(team).scored();
     }
 }

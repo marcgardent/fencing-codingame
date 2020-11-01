@@ -1,6 +1,6 @@
 package com.codingame.game;
 
-import com.codingame.game.core.*;
+import com.codingame.game.models.*;
 import com.codingame.game.views.MainView;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
@@ -17,7 +17,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
     private MainView view;
 
     private GameState state;
-    private Match match;
+    private MatchModel match;
     private Random random;
     private int leagueId;
 
@@ -25,7 +25,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
     public void init() {
         random = new Random(gameManager.getSeed());
         leagueId = gameManager.getLeagueLevel() - 1;
-        match = new Match(this);
+        match = new MatchModel(this);
         state = match.getState();
 
 
@@ -35,10 +35,10 @@ public class Referee extends AbstractReferee implements RefereObserver {
         view.init(state, playerA, playerB);
 
         gameManager.setFrameDuration(250);
-        gameManager.setMaxTurns(com.codingame.game.core.Match.MAX_TICK / 2);
+        gameManager.setMaxTurns(MatchModel.MAX_TICK / 2);
     }
 
-    private long sendInputs(Player player, TeamState me, TeamState you) {
+    private long sendInputs(Player player, TeamModel me, TeamModel you) {
 
         // posture:int attitude:int position:int move:int
         ResultType r = ResultType.CONTINUE;
@@ -111,7 +111,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
         }
     }
 
-    private ActionType playerTurn(Player player, TeamState me, TeamState you) {
+    private ActionType playerTurn(Player player, TeamModel me, TeamModel you) {
         try {
             final ActionType action = player.getAction(leagueId);
             gameManager.addToGameSummary(
@@ -150,30 +150,23 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void playerIsKo(PlayerState player) {
+    public void playerTired(PlayerModel player) {
         view.playerKo(player);
     }
 
     @Override
-    public void scoreAB() {
-        view.scored(state.teamA);
-        view.scored(state.teamB);
-        System.out.println("ScoreAB");
-    }
-
-    @Override
-    public void score(TeamState team) {
+    public void scored(TeamModel team) {
         view.scored(team);
         System.out.println("Score");
     }
 
     @Override
-    public void outside(PlayerState player) {
+    public void outside(PlayerModel player) {
         System.out.println("Outside");
     }
 
     @Override
-    public void collide() {
+    public void collided() {
         System.out.println("Collide");
     }
 
@@ -194,22 +187,22 @@ public class Referee extends AbstractReferee implements RefereObserver {
     }
 
     @Override
-    public void move(PlayerState player, int from, int to) {
+    public void move(PlayerModel player, int from, int to) {
         view.move(player, from, to);
     }
 
     @Override
-    public void energyChanged(PlayerState player, int delta) {
+    public void energyChanged(PlayerModel player, int delta) {
         view.energyChanged(player, delta);
     }
 
     @Override
-    public void hit(PlayerState player) {
+    public void hit(PlayerModel player) {
         view.hit(player);
     }
 
     @Override
-    public void miss(PlayerState player) {
+    public void missed(PlayerModel player) {
         view.hit(player);
     }
 }

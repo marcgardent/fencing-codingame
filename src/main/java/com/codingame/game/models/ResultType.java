@@ -1,4 +1,4 @@
-package com.codingame.game.core;
+package com.codingame.game.models;
 
 public enum ResultType {
 

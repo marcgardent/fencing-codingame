@@ -1,6 +1,6 @@
 package com.codingame.game;
 
-import com.codingame.game.core.ActionType;
+import com.codingame.game.models.ActionType;
 import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 
 public class Player extends AbstractMultiplayerPlayer {
