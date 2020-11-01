@@ -8,9 +8,9 @@ public enum ActionType {
     MIDDLE_POSTURE(1, 0, -1, 0, 0, 0),
     FORWARD_MOVE(2, 0, -1, 50, 0, 0),
     BACKWARD_MOVE(3, 0, -1, -50, 0, 0),
-    OFFENSIVE_ATTITUDE(4, 0, -1, 0, 0, 0),
+    OFFENSIVE_ATTITUDE(4, 0, -1, 0, 0, 30),
     BREAK_ATTITUDE(5, 0, 2, 0, 0, 0),
-    DEFENSIVE_ATTITUDE(6, 0, -1, 0, 0, 0),
+    DEFENSIVE_ATTITUDE(6, 0, -1, 0, 30, 0),
 
     //League 1
     TOP_POSTURE(7, 1, -1, 0, 0, 0),
@@ -21,8 +21,8 @@ public enum ActionType {
     DOUBLE_BACKWARD_MOVE(10, 2, -1, -75, 0, 0),
 
     // league 3
-    OFFENSIVE_RANGE_SKILL(11, 3, -5, 0, 0, 30),
-    DEFENSIVE_RANGE_SKILL(12, 3, -5, 0, 30, 0),
+    OFFENSIVE_RANGE_SKILL(11, 3, -5, 0, 0, 0),
+    DEFENSIVE_RANGE_SKILL(12, 3, -5, 0, 0, 0),
     ENERGY_MAX_SKILL(13, 3, -5, 0, 0, 0),
     FORWARD_SKILL(14, 3, -5, 0, 0, 0),
     BACKWARD_SKILL(15, 3, -5, 0, 0, 0),

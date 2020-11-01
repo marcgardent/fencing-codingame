@@ -1,6 +1,7 @@
 package com.codingame.game;
 
 import com.codingame.game.core.*;
+import com.codingame.game.views.MainView;
 import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.GameManager;
@@ -13,7 +14,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
     @Inject
     private MultiplayerGameManager<Player> gameManager;
     @Inject
-    private View view;
+    private MainView view;
 
     private GameState state;
     private Match match;
@@ -71,7 +72,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
 
         if (state.restart) {
             state = match.restart();
-            view.restart(state);
+            view.restart();
         } else {
             Player playerA = gameManager.getPlayer(0);
             Player playerB = gameManager.getPlayer(1);
@@ -99,8 +100,7 @@ public class Referee extends AbstractReferee implements RefereObserver {
                 endGame();
             } else {
                 state = match.tick(A, B);
-                view.tick(state);
-
+                view.tick();
 
                 String msgA = String.join(", ", state.teamA.messages);
                 String msgB = String.join(", ", state.teamB.messages);
@@ -156,25 +156,25 @@ public class Referee extends AbstractReferee implements RefereObserver {
 
     @Override
     public void scoreAB() {
-        view.score(state.teamA);
-        view.score(state.teamB);
-        System.out.println(String.format("ScoreAB"));
+        view.scored(state.teamA);
+        view.scored(state.teamB);
+        System.out.println("ScoreAB");
     }
 
     @Override
     public void score(TeamState team) {
-        view.score(team);
-        System.out.println(String.format("Score"));
+        view.scored(team);
+        System.out.println("Score");
     }
 
     @Override
     public void outside(PlayerState player) {
-        System.out.println(String.format("Outside"));
+        System.out.println("Outside");
     }
 
     @Override
     public void collide() {
-        System.out.println(String.format("Collide"));
+        System.out.println("Collide");
     }
 
     @Override
