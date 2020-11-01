@@ -3,27 +3,27 @@ package com.codingame.game.models;
 public class MatchModel {
     public static final int MAX_TICK = 400;
 
-    private final GameState state;
-    private final RefereObserver observer;
+    private final GameModel state;
+    private final MatchObserver observer;
 
-    public MatchModel(RefereObserver observer) {
+    public MatchModel(MatchObserver observer) {
         this.observer = observer;
         state = initGame();
     }
 
-    public GameState getState() {
+    public GameModel getState() {
         return state;
     }
 
-    private GameState initGame() {
-        GameState ret = new GameState();
+    private GameModel initGame() {
+        GameModel ret = new GameModel();
         ret.tick = 0;
         initTeam(ret.teamA, PlayerModel.SPAWN_POSITION_A, PlayerModel.LEFT_ORIENTATION);
         initTeam(ret.teamB, PlayerModel.SPAWN_POSITION_B, PlayerModel.RIGHT_ORIENTATION);
         return ret;
     }
 
-    public GameState tick(ActionType actionA, ActionType actionB) {
+    public GameModel tick(ActionType actionA, ActionType actionB) {
         state.teamA.messages.clear();
         state.teamB.messages.clear();
 
@@ -36,10 +36,10 @@ public class MatchModel {
         applyMove(state.teamA.player);
         applyMove(state.teamB.player);
 
-        actionA = resolvePose(state.teamA, actionA);
-        actionB = resolvePose(state.teamA, actionB);
+        setPose(state.teamA, actionA);
+        setPose(state.teamA, actionB);
 
-        resolveScore(actionA, actionB);
+        resolveScore();
 
         checkTheEnd();
 
@@ -75,25 +75,33 @@ public class MatchModel {
             team.player.energy = 0;
             team.messages.add(action.name() + " suppressed because of the KO");
             observer.playerTired(team.player);
+            team.player.attitude = ActionType.SUPPRESSED;
+            team.player.move = ActionType.SUPPRESSED;
             return ActionType.SUPPRESSED;
         }
-        if (gain != 0) team.messages.add("energy " + (gain >= 0 ? "+" : "") + gain);
+        if (gain != 0) {
+            team.messages.add("energy " + (gain >= 0 ? "+" : "") + gain);
+        }
+        if (action == ActionType.BREAK) {
+            team.player.attitude = ActionType.BREAK;
+            team.player.move = ActionType.BREAK;
+        }
         return action;
     }
 
-    private void resolveScore(ActionType actionA, ActionType actionB) {
+    private void resolveScore() {
         state.teamA.touched = false;
         state.teamB.touched = false;
 
-        if (actionA.offensiveRange > 0) {
-            state.teamB.touched = isTouched(state.teamA, actionA, state.teamB, actionB);
+        if (state.teamA.player.attitude.offensiveRange > 0) {
+            state.teamB.touched = isTouched(state.teamA, state.teamB);
             if (state.teamB.touched) {
                 state.teamA.score += 1;
                 observer.scored(state.teamA);
             }
         }
-        if (actionB.offensiveRange > 0) {
-            state.teamA.touched = isTouched(state.teamB, actionB, state.teamA, actionA);
+        if (state.teamB.player.attitude.offensiveRange > 0) {
+            state.teamA.touched = isTouched(state.teamB, state.teamA);
             if (state.teamA.touched) {
                 state.teamB.score += 1;
                 observer.scored(state.teamB);
@@ -101,8 +109,9 @@ public class MatchModel {
         }
     }
 
-    private boolean isTouched(TeamModel striker, ActionType offensiveAction, TeamModel defender, ActionType defenseAction) {
-
+    private boolean isTouched(TeamModel striker, TeamModel defender) {
+        ActionType defenseAction = defender.player.attitude;
+        ActionType offensiveAction = striker.player.attitude;
         int defenseRange = (state.teamA.player.posture == state.teamB.player.posture) ? defenseAction.defensiveRange + defender.player.defensiveRangeSkill : 0;
         int offensiveRange = offensiveAction.offensiveRange + striker.player.offensiveRangeSkill;
 
@@ -113,7 +122,7 @@ public class MatchModel {
             if (defenseAction.defensiveRange > 0) {
                 defender.messages.add(defenseAction.name() + "(" + defenseRange + ")" + " failed");
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveAction + ")" + " touched");
+            striker.messages.add(offensiveAction.name() + "(" + offensiveRange + ")" + " touched");
             observer.hit(striker.player);
             observer.missed(striker.player);
             return true;
@@ -121,7 +130,7 @@ public class MatchModel {
             if (defenseAction.defensiveRange > 0) {
                 defender.messages.add(defenseAction.name() + "(" + defenseRange + ")" + " succeeded");
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveAction + ")" + " failed");
+            striker.messages.add(offensiveAction.name() + "(" + offensiveRange + ")" + " failed");
             observer.missed(striker.player);
             observer.hit(striker.player);
             return false;
@@ -129,7 +138,7 @@ public class MatchModel {
     }
 
 
-    private ActionType resolvePose(TeamModel team, ActionType action) {
+    private void setPose(TeamModel team, ActionType action) {
         if (action == ActionType.BOTTOM_POSTURE || action == ActionType.TOP_POSTURE || action == ActionType.MIDDLE_POSTURE) {
             if (action != team.player.posture) team.messages.add("posture changed:" + action.name());
             else team.messages.add("posture ignored:" + action.name());
@@ -140,7 +149,6 @@ public class MatchModel {
             else team.messages.add("attitude ignored:" + action.name());
             team.player.attitude = action;
         }
-        return action;
     }
 
     private void setMoveAndVelocity(TeamModel team, ActionType action) {
@@ -149,7 +157,7 @@ public class MatchModel {
             boolean noChanged = (action.move > 0 && player.move.move > 0) || (action.move < 0 && player.move.move < 0);
             player.velocity = noChanged ? player.velocity + 1 : 0;
             player.move = action;
-        } else if (action == ActionType.BREAK_ATTITUDE) {
+        } else if (action == ActionType.BREAK) {
             player.velocity = 0;
             player.move = action;
         } else {
@@ -159,7 +167,7 @@ public class MatchModel {
 
     private void applyMove(PlayerModel player) {
         int move = player.getMove();
-        if (move > 0) {
+        if (move != 0) {
             int p = player.position + player.orientation * move;
             p = Math.max(p, PlayerModel.MIN_POSITION);
             p = Math.min(p, PlayerModel.MAX_POSITION);
@@ -189,7 +197,7 @@ public class MatchModel {
         team.player.reset();
     }
 
-    public GameState restart() {
+    public GameModel restart() {
         state.restart = false;
 
         observer.move(state.teamA.player, state.teamA.player.position, PlayerModel.SPAWN_POSITION_A);

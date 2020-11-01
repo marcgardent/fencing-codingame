@@ -3,7 +3,10 @@ package com.codingame.game.views;
 import com.codingame.game.Player;
 import com.codingame.game.models.ActionType;
 import com.codingame.game.models.PlayerModel;
-import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Group;
+import com.codingame.gameengine.module.entities.Rectangle;
+import com.codingame.gameengine.module.entities.Text;
 
 public class PlayerView {
 
@@ -22,14 +25,14 @@ public class PlayerView {
     private Text ko;
     private Text energy;
 
-    PlayerView(GraphicEntityModule g, PlayerModel playerState) {
+    PlayerView(GraphicEntityModule g, PlayerModel playerModel) {
         this.g = g;
-        this.playerModel = playerState;
+        this.playerModel = playerModel;
     }
 
 
-    public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerState, Player player) {
-        PlayerView ret = new PlayerView(g, playerState);
+    public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerModel, Player player) {
+        PlayerView ret = new PlayerView(g, playerModel);
         Rectangle body = g.createRectangle()
                 .setWidth(50).setHeight(100)
                 .setX(-50).setY(-100)
@@ -63,22 +66,13 @@ public class PlayerView {
                 .setX(halfRange).setY(-5)
                 .setFillColor(player.getColorToken()).setZIndex(10);
 
-        Sprite avatar = g.createSprite()
-                .setX(0)
-                .setY(-300)
-                .setZIndex(20)
-                .setImage(player.getAvatarToken())
-                .setAnchor(0.5)
-                .setBaseHeight(116)
-                .setBaseWidth(116);
-
         ret.ko = g.createText("~!#?").setFillColor(Colors.WHITE).setX(-20).setY(-220).setFontFamily("Lato").setFontSize(40).setVisible(false);
         ret.energy = g.createText("+2").setFillColor(Colors.WHITE).setX(-10).setY(-260).setFontFamily("Lato")
                 .setFontSize(40).setVisible(false).setStrokeThickness(3).setFontWeight(Text.FontWeight.BOLD);
         ret.arm = g.createGroup(arm, hand, blade).setX(ARM_DEFENSIVE).setY(-80).setRotation(Math.PI / 4);
 
-        Group p = g.createGroup(body, ret.ko, ret.arm, head, grid).setScaleX(playerState.orientation);
-        Group texts = g.createGroup(ret.ko, avatar);
+        Group p = g.createGroup(body, ret.ko, ret.arm, head, grid).setScaleX(playerModel.orientation);
+        Group texts = g.createGroup(ret.ko);
         ret.character = g.createGroup(p, texts).setY((int) (StageView.LINE));
 
         ret.Color = player.getColorToken();
@@ -102,7 +96,7 @@ public class PlayerView {
             double angle = MIDDLE_ANGLE;
             if (playerModel.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
             else if (playerModel.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
-            else if (playerModel.attitude == ActionType.BREAK_ATTITUDE) angle = BREAK_ANGLE;
+            else if (playerModel.attitude == ActionType.BREAK) angle = BREAK_ANGLE;
             this.arm.setRotation(angle);
             this.arm.setX(ARM_DEFENSIVE);
             g.commitEntityState(0, this.arm);
@@ -115,6 +109,8 @@ public class PlayerView {
                 g.commitEntityState(0.66, this.arm);
                 this.arm.setX(ARM_OFFENSIVE);
                 g.commitEntityState(1, this.arm);
+            } else if (playerModel.attitude == ActionType.DEFENSIVE_ATTITUDE) {
+
             }
         }
 
@@ -143,5 +139,6 @@ public class PlayerView {
     }
 
     public void hit() {
+
     }
 }

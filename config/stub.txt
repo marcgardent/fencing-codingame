@@ -1,27 +1,22 @@
 gameloop
-read myPosition:int myEnergy:int myScore:int
-read yourPosition:int yourEnergy:int yourScore:int
-write 0 0
+read myPosition:int myPosture:int myAttitude:int myEnergy:int myScore:int
+read yourPosition:int yourPosture:int yourAttitude:int yourEnergy:int yourScore:int
+write 5
 
 STATEMENT
 Score 20 points!
-moves
-- idle=0     energy+1
-- forward=1  energy-1 position+50
-- backward=2 energy-1 position-50
-actions (attack)
-- idle=0     energy+1
-- basic=3    energy-3 win against idle|complex
-- standard=4 energy-4 win against idle|basic
-- complex=5  energy-5 win against idle|standard
 
 INPUT
 myPosition: range [0,500], step 50, init 200|300
 myEnergy: range [0,20] init 20
 myScore: range [0,20] init 0
+myPosture: middle 1,top 7,bottom 8
+myAttitude: offensive 4, break 5, defensive 6
 yourPosition: range [0,500], step 50, init 200|300
 yourEnergy: range [0,20] init 20
 yourScore: range [0,20] init 0
+yourPosture: middle 1,top 7,bottom 8
+myAttitude: offensive 4, break 5, defensive 6
 
 OUTPUT
-<move> <action>
+<action>

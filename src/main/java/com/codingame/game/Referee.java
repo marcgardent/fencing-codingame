@@ -10,13 +10,13 @@ import com.google.inject.Inject;
 
 import java.util.Random;
 
-public class Referee extends AbstractReferee implements RefereObserver {
+public class Referee extends AbstractReferee implements MatchObserver {
     @Inject
     private MultiplayerGameManager<Player> gameManager;
     @Inject
     private MainView view;
 
-    private GameState state;
+    private GameModel state;
     private MatchModel match;
     private Random random;
     private int leagueId;
@@ -80,8 +80,8 @@ public class Referee extends AbstractReferee implements RefereObserver {
             long timeoutA = sendInputs(playerA, state.teamA, state.teamB);
             long timeoutB = sendInputs(playerB, state.teamB, state.teamA);
 
-            gameManager.addToGameSummary(playerA.getNicknameToken() + "=" + timeoutA);
-            gameManager.addToGameSummary(playerB.getNicknameToken() + "=" + timeoutB);
+//            gameManager.addToGameSummary(playerA.getNicknameToken() + "=" + timeoutA);
+//            gameManager.addToGameSummary(playerB.getNicknameToken() + "=" + timeoutB);
 
             ActionType A = playerTurn(playerA, state.teamA, state.teamB);
             ActionType B = playerTurn(playerB, state.teamB, state.teamA);
@@ -105,8 +105,19 @@ public class Referee extends AbstractReferee implements RefereObserver {
                 String msgA = String.join(", ", state.teamA.messages);
                 String msgB = String.join(", ", state.teamB.messages);
 
-                gameManager.addToGameSummary(String.format("%s:%s", playerA.getNicknameToken(), msgA));
-                gameManager.addToGameSummary(String.format("%s:%s", playerB.getNicknameToken(), msgB));
+                gameManager.addToGameSummary(String.format("%s:%n", playerA.getNicknameToken()));
+                System.out.printf("%s:%n", playerA.getNicknameToken());
+                for (String msg : state.teamA.messages) {
+                    gameManager.addToGameSummary(String.format("%s%n", msg));
+                    System.out.printf("%s%n", msg);
+                }
+
+                gameManager.addToGameSummary(String.format("%s:%n", playerB.getNicknameToken()));
+                System.out.printf("%s:%n", playerB.getNicknameToken());
+                for (String msg : state.teamB.messages) {
+                    gameManager.addToGameSummary(String.format("%s%n", msg));
+                    System.out.printf("%s%n", msg);
+                }
             }
         }
     }

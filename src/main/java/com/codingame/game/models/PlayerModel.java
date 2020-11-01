@@ -45,7 +45,7 @@ public class PlayerModel {
     }
 
     public int getMove() {
-        int gain = velocity * (VELOCITY_GAIN + velocitySkill);
+        int gain = 0; // velocity * (VELOCITY_GAIN + velocitySkill);
         if (move == ActionType.BACKWARD_MOVE) return move.move + backwardSkill + gain;
         if (move == ActionType.FORWARD_MOVE) return move.move + forwardSkill + gain;
         if (move == ActionType.DOUBLE_BACKWARD_MOVE) return move.move + doubleBackwardSkill + gain;

@@ -18,7 +18,8 @@ public class Player extends AbstractMultiplayerPlayer {
         ActionType ret = ActionType.fromInteger(value);
 
         if (ret == null) throw new InvalidAction("Excepted: '<action>' found: '" + line + "'");
-        //else if (ret.league > leagueId) throw new InvalidAction("Illegal action for your current league level " + (leagueId + 1) + "), available in the league level " + ret.league);
+        else if (ret.league > leagueId)
+            throw new InvalidAction("Illegal action for your current league level " + (leagueId + 1) + "), available in the league level " + ret.league);
         return ret;
     }
 }

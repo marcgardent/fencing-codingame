@@ -2,37 +2,59 @@ package com.codingame.game.views;
 
 import com.codingame.game.Player;
 import com.codingame.game.models.TeamModel;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Rectangle;
-import com.codingame.gameengine.module.entities.Text;
+import com.codingame.gameengine.module.entities.*;
 
 public class TeamView {
-    public static final int ENERGY_BAR_SIZE = 100;
+    public static final int ENERGY_BAR_SIZE = 90;
     public final PlayerView playerView;
     private final GraphicEntityModule g;
     private final TeamModel teamModel;
     private final int color;
     private Text score;
-    private Rectangle Light;
+
 
     private Rectangle energyBar;
+    private final Group playerBlock;
 
-
-    TeamView(GraphicEntityModule g, TeamModel teamState, PlayerView playerView, int color) {
+    TeamView(GraphicEntityModule g, TeamModel teamState, PlayerView playerView, Group playerName, int color) {
         this.g = g;
         this.teamModel = teamState;
         this.playerView = playerView;
+        this.playerBlock = playerName;
         this.color = color;
     }
 
     public static TeamView fromPlayer(GraphicEntityModule g, TeamModel teamState, Player player) {
         PlayerView v = PlayerView.fromPlayer(g, teamState.player, player);
-        return new TeamView(g, teamState, v, player.getColorToken());
+
+
+        Rectangle light = g.createRectangle()
+                .setWidth(StageView.HALF_WIDTH).setHeight(120)
+                .setX(0).setY(0)
+                .setFillColor(player.getColorToken());
+        Sprite avatar = g.createSprite()
+                .setX(10)
+                .setY(10)
+                .setImage(player.getAvatarToken())
+                .setAnchor(0)
+                .setBaseHeight(100)
+                .setBaseWidth(100);
+
+        Text text = g.createText(player.getNicknameToken())
+                .setX(150).setY(30)
+                .setFontSize(60)
+                .setFillColor(Colors.WHITE)
+                .setFontWeight(Text.FontWeight.BOLD);
+
+        Group playerName = g.createGroup(avatar, light, text).setZIndex(20).setAlpha(0.5);
+
+        return new TeamView(g, teamState, v, playerName, player.getColorToken());
     }
 
     public void restart() {
-        this.Light.setFillColor(Colors.COLOR_OFF);
-        g.commitEntityState(1, this.Light);
+        this.playerBlock.setAlpha(0.5);
+        g.commitEntityState(1, this.playerBlock);
+        playerView.restartPlayer();
     }
 
     public void draw() {
@@ -42,24 +64,19 @@ public class TeamView {
         playerView.draw();
     }
 
-    public TeamView addLightUI(int x, int y) {
-        Rectangle light = g.createRectangle()
-                .setWidth(StageView.HALF_WIDTH).setHeight(40)
-                .setX(0).setY(0)
-                .setLineWidth(5).setLineColor(Colors.BLACK)
-                .setFillColor(Colors.COLOR_OFF).setZIndex(0);
-        this.Light = light;
-        g.createGroup(light).setX(x).setY(y);
+    public TeamView setPlayerBlock(int x, int y) {
+        playerBlock.setX(x).setY(y);
         return this;
     }
 
+
     public TeamView addScoreUI(int x, int y) {
         this.score = g.createText("00")
-                .setFontFamily("Lato").setFontSize(44)
+                .setFontFamily("Lato").setFontSize(80)
                 .setX(5).setY(5).setFillColor(Colors.WHITE).setZIndex(20);
 
         Rectangle rect = g.createRectangle().setFillAlpha(0).setLineColor(Colors.WHITE).setLineWidth(3)
-                .setX(0).setY(0).setWidth(60).setHeight(60);
+                .setX(0).setY(0).setWidth(100).setHeight(100);
 
         g.createGroup(this.score, rect).setX(x).setY(y);
         return this;
@@ -81,20 +98,16 @@ public class TeamView {
     }
 
     public void scored() {
+        this.playerBlock.setAlpha(0.2);
+        g.commitEntityState(0.25, this.playerBlock);
 
-        this.Light.setFillColor(this.color);
-        g.commitEntityState(0, this.Light);
+        this.playerBlock.setAlpha(1);
+        g.commitEntityState(0.5, this.playerBlock);
 
-        this.Light.setAlpha(0.2);
-        g.commitEntityState(0.25, this.Light);
+        this.playerBlock.setAlpha(0.2);
+        g.commitEntityState(0.75, this.playerBlock);
 
-        this.Light.setAlpha(1);
-        g.commitEntityState(0.5, this.Light);
-
-        this.Light.setAlpha(0.2);
-        g.commitEntityState(0.75, this.Light);
-
-        this.Light.setAlpha(1);
-        g.commitEntityState(1, this.Light);
+        this.playerBlock.setAlpha(1);
+        g.commitEntityState(1, this.playerBlock);
     }
 }

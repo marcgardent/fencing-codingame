@@ -1,6 +1,6 @@
 package com.codingame.game.models;
 
-public interface RefereObserver {
+public interface MatchObserver {
 
     void playerTired(PlayerModel player);
 

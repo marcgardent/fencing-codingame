@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 enum ActionType {
     //League 0
-    SUPPRESSED(0, 0, 0, 0, 0, 0),
+    SUPPRESSED(0, Integer.MAX_VALUE, 0, 0, 0, 0),
     MIDDLE_POSTURE(1, 0, -1, 0, 0, 0),
-    FORWARD_MOVE(2, 0, -1, 50, 0, 0),
-    BACKWARD_MOVE(3, 0, -1, -50, 0, 0),
+    FORWARD_MOVE(2, 0, -1, 20, 0, 0),
+    BACKWARD_MOVE(3, 0, -1, -20, 0, 0),
     OFFENSIVE_ATTITUDE(4, 0, -1, 0, 0, 30),
     BREAK_ATTITUDE(5, 0, 2, 0, 0, 0),
     DEFENSIVE_ATTITUDE(6, 0, -1, 0, 30, 0),
@@ -17,8 +17,8 @@ enum ActionType {
     BOTTOM_POSTURE(8, 1, -1, 0, 0, 0),
 
     //League 2
-    DOUBLE_FORWARD_MOVE(9, 2, -1, 100, 0, 0),
-    DOUBLE_BACKWARD_MOVE(10, 2, -1, -75, 0, 0),
+    DOUBLE_FORWARD_MOVE(9, 2, -1, 40, 0, 0),
+    DOUBLE_BACKWARD_MOVE(10, 2, -1, -30, 0, 0),
 
     // league 3
     OFFENSIVE_RANGE_SKILL(11, 3, -5, 0, 0, 0),
@@ -79,7 +79,6 @@ public class Player1 {
             int myEnergy = in.nextInt();
             int myScore = in.nextInt();
 
-
             //You
             int yourPosition = in.nextInt();
             ActionType yourPosture = ActionType.fromInteger(in.nextInt());
@@ -92,29 +91,34 @@ public class Player1 {
             System.err.printf("Result %d%n", result);
 
             ActionType myAction = getRandom(ActionType.getByLeague(0));
-            int distance = yourPosition - myPosition;
+            int distance = (yourPosition - myPosition) / ActionType.FORWARD_MOVE.move;
 
-            if (myEnergy == 0) {
+            boolean youCanAttack = yourEnergy > distance + (yourAttitude == ActionType.OFFENSIVE_ATTITUDE ? 0 : 1);
+            boolean iCanAttack = myEnergy > distance + (myAttitude == ActionType.OFFENSIVE_ATTITUDE ? 0 : 1);
+            boolean leader = myScore > yourScore;
+            boolean challenger = myScore < yourScore;
+            boolean tired = myEnergy == 0;
+
+            // panic mode: leak of energy
+            if (tired) {
                 myAction = ActionType.BREAK_ATTITUDE;
-            } else if (myScore <= yourScore && myEnergy > 10) {
-                //attack
-                if (myAttitude != ActionType.OFFENSIVE_ATTITUDE) {
-                    myAction = ActionType.OFFENSIVE_ATTITUDE;
-                } else {
+            }
+            // panic mode: attack
+            else if (youCanAttack && iCanAttack) {
+                myAction = challenger ? ActionType.DEFENSIVE_ATTITUDE : ActionType.OFFENSIVE_ATTITUDE;
+                if (myAction == myAttitude) {
+                    myAction = myAction == ActionType.DEFENSIVE_ATTITUDE ? ActionType.BACKWARD_MOVE : ActionType.FORWARD_MOVE;
+                }
+            } else if (iCanAttack) {
+                myAction = ActionType.OFFENSIVE_ATTITUDE;
+                if (myAction == myAttitude) {
                     myAction = ActionType.FORWARD_MOVE;
                 }
             } else {
-                //defense
-                if (distance > 100) {
-                    myAction = ActionType.BREAK_ATTITUDE;
-                } else if (myAttitude != ActionType.DEFENSIVE_ATTITUDE) {
-                    myAction = ActionType.DEFENSIVE_ATTITUDE;
-                } else if (myPosition > 100) {
-                    myAction = ActionType.BACKWARD_MOVE;
-                } else {
-                    myAction = ActionType.FORWARD_MOVE;
-                }
+                myAction = ActionType.BREAK_ATTITUDE;
             }
+
+            System.err.printf("Playing %s, steps: %d %n", myAction.name(), distance);
             System.out.printf("%d%n", myAction.code);
         }
     }

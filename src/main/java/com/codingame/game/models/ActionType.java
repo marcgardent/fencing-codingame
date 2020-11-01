@@ -4,12 +4,12 @@ import java.util.Arrays;
 
 public enum ActionType {
     //League 0
-    SUPPRESSED(0, 0, 0, 0, 0, 0),
+    SUPPRESSED(0, Integer.MAX_VALUE, 0, 0, 0, 0),
     MIDDLE_POSTURE(1, 0, -1, 0, 0, 0),
-    FORWARD_MOVE(2, 0, -1, 50, 0, 0),
-    BACKWARD_MOVE(3, 0, -1, -50, 0, 0),
+    FORWARD_MOVE(2, 0, -1, 20, 0, 0),
+    BACKWARD_MOVE(3, 0, -1, -20, 0, 0),
     OFFENSIVE_ATTITUDE(4, 0, -1, 0, 0, 30),
-    BREAK_ATTITUDE(5, 0, 2, 0, 0, 0),
+    BREAK(5, 0, 2, 0, 0, 0),
     DEFENSIVE_ATTITUDE(6, 0, -1, 0, 30, 0),
 
     //League 1
@@ -17,8 +17,8 @@ public enum ActionType {
     BOTTOM_POSTURE(8, 1, -1, 0, 0, 0),
 
     //League 2
-    DOUBLE_FORWARD_MOVE(9, 2, -1, 100, 0, 0),
-    DOUBLE_BACKWARD_MOVE(10, 2, -1, -75, 0, 0),
+    DOUBLE_FORWARD_MOVE(9, 2, -1, 40, 0, 0),
+    DOUBLE_BACKWARD_MOVE(10, 2, -1, -30, 0, 0),
 
     // league 3
     OFFENSIVE_RANGE_SKILL(11, 3, -5, 0, 0, 0),

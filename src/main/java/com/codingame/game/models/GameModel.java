@@ -1,6 +1,6 @@
 package com.codingame.game.models;
 
-public class GameState {
+public class GameModel {
 
     public int tick = 0;
 
