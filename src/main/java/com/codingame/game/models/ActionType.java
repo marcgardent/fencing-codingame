@@ -3,16 +3,17 @@ package com.codingame.game.models;
 import java.util.Arrays;
 
 public enum ActionType {
+
     //League 0
     SUPPRESSED(0, Integer.MAX_VALUE, 0, 0, 0, 0),
-    MIDDLE_POSTURE(1, 0, -1, 0, 0, 0),
-    FORWARD_MOVE(2, 0, -1, 20, 0, 0),
-    BACKWARD_MOVE(3, 0, -1, -20, 0, 0),
-    OFFENSIVE_ATTITUDE(4, 0, -1, 0, 0, 30),
-    BREAK(5, 0, 2, 0, 0, 0),
-    DEFENSIVE_ATTITUDE(6, 0, -1, 0, 30, 0),
+    BREAK(1, 0, 2, 0, 0, 0),
+    WALK(2, 0, -1, 20, 0, 0),
+    RETREAT(3, 0, -1, -20, 0, 0),
+    LUNGE(4, 0, -2, 0, 0, 30),
+    PARRY(5, 0, -2, 0, 30, 0),
 
     //League 1
+    MIDDLE_POSTURE(6, 1, -1, 0, 0, 0),
     TOP_POSTURE(7, 1, -1, 0, 0, 0),
     BOTTOM_POSTURE(8, 1, -1, 0, 0, 0),
 

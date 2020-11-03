@@ -34,37 +34,8 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
         view.init(state, playerA, playerB);
 
-        gameManager.setFrameDuration(250);
+        gameManager.setFrameDuration(200);
         gameManager.setMaxTurns(MatchModel.MAX_TICK / 2);
-    }
-
-    private long sendInputs(Player player, TeamModel me, TeamModel you) {
-
-        // posture:int attitude:int position:int move:int
-        ResultType r = ResultType.CONTINUE;
-        if (me.touched && you.touched) {
-            r = ResultType.DOUBLE_TOUCH;
-        } else if (me.touched) {
-            r = ResultType.TOUCHED;
-        } else if (you.touched) {
-            r = ResultType.TOUCH;
-        }
-
-        player.sendInputLine(Integer.toString(r.code));
-        player.sendInputLine(String.format("%d %d %d %d %d",
-                me.player.getRelativePosition(),
-                me.player.posture.code, me.player.attitude.code,
-                me.player.energy, me.score));
-
-        player.sendInputLine(String.format("%d %d %d %d %d",
-                you.player.getRelativeOpponentPosition(),
-                you.player.posture.code, you.player.attitude.code,
-                you.player.energy, you.score));
-
-        long s = System.nanoTime();
-        player.execute();
-        s = System.nanoTime() - s;
-        return s;
     }
 
     @Override
@@ -77,8 +48,8 @@ public class Referee extends AbstractReferee implements MatchObserver {
             Player playerA = gameManager.getPlayer(0);
             Player playerB = gameManager.getPlayer(1);
 
-            long timeoutA = sendInputs(playerA, state.teamA, state.teamB);
-            long timeoutB = sendInputs(playerB, state.teamB, state.teamA);
+            long timeoutA = playerA.sendInputs(state.teamA, state.teamB);
+            long timeoutB = playerB.sendInputs(state.teamB, state.teamA);
 
 //            gameManager.addToGameSummary(playerA.getNicknameToken() + "=" + timeoutA);
 //            gameManager.addToGameSummary(playerB.getNicknameToken() + "=" + timeoutB);
@@ -87,16 +58,16 @@ public class Referee extends AbstractReferee implements MatchObserver {
             ActionType B = playerTurn(playerB, state.teamB, state.teamA);
 
             if (A == null && B == null) {
-                playerA.setScore(-1);
-                playerB.setScore(-1);
+                playerA.setScore(-20);
+                playerB.setScore(-20);
                 endGame();
             } else if (A == null) {
-                playerA.setScore(-1);
+                playerA.setScore(-20);
                 playerB.setScore(20);
                 endGame();
             } else if (B == null) {
                 playerA.setScore(20);
-                playerB.setScore(-1);
+                playerB.setScore(-20);
                 endGame();
             } else {
                 state = match.tick(A, B);
@@ -105,19 +76,19 @@ public class Referee extends AbstractReferee implements MatchObserver {
                 String msgA = String.join(", ", state.teamA.messages);
                 String msgB = String.join(", ", state.teamB.messages);
 
-                gameManager.addToGameSummary(String.format("%s:%n", playerA.getNicknameToken()));
-                System.out.printf("%s:%n", playerA.getNicknameToken());
-                for (String msg : state.teamA.messages) {
-                    gameManager.addToGameSummary(String.format("%s%n", msg));
-                    System.out.printf("%s%n", msg);
-                }
-
-                gameManager.addToGameSummary(String.format("%s:%n", playerB.getNicknameToken()));
-                System.out.printf("%s:%n", playerB.getNicknameToken());
-                for (String msg : state.teamB.messages) {
-                    gameManager.addToGameSummary(String.format("%s%n", msg));
-                    System.out.printf("%s%n", msg);
-                }
+//                gameManager.addToGameSummary(String.format("%s:%n", playerA.getNicknameToken()));
+//                System.out.printf("%s:%n", playerA.getNicknameToken());
+//                for (String msg : state.teamA.messages) {
+//                    gameManager.addToGameSummary(String.format("%s%n", msg));
+//                    System.out.printf("%s%n", msg);
+//                }
+//
+//                gameManager.addToGameSummary(String.format("%s:%n", playerB.getNicknameToken()));
+//                System.out.printf("%s:%n", playerB.getNicknameToken());
+//                for (String msg : state.teamB.messages) {
+//                    gameManager.addToGameSummary(String.format("%s%n", msg));
+//                    System.out.printf("%s%n", msg);
+//                }
             }
         }
     }
@@ -126,7 +97,7 @@ public class Referee extends AbstractReferee implements MatchObserver {
         try {
             final ActionType action = player.getAction(leagueId);
             gameManager.addToGameSummary(
-                    String.format("Player %s played (action=%s)",
+                    String.format("%s played %s",
                             player.getNicknameToken(),
                             action.name()));
             return action;
@@ -151,8 +122,8 @@ public class Referee extends AbstractReferee implements MatchObserver {
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
 
-        playerA.setScore(playerA.isActive() ? state.teamA.score : -1);
-        playerB.setScore(playerB.isActive() ? state.teamB.score : -1);
+        playerA.setScore(playerA.isActive() ? state.teamA.score - state.teamB.score : -20);
+        playerB.setScore(playerB.isActive() ? state.teamB.score - state.teamA.score : -20);
 
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(
                 "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
@@ -168,17 +139,15 @@ public class Referee extends AbstractReferee implements MatchObserver {
     @Override
     public void scored(TeamModel team) {
         view.scored(team);
-        System.out.println("Score");
     }
 
     @Override
     public void outside(PlayerModel player) {
-        System.out.println("Outside");
+
     }
 
     @Override
     public void collided() {
-        System.out.println("Collide");
     }
 
     @Override
@@ -194,6 +163,7 @@ public class Referee extends AbstractReferee implements MatchObserver {
     @Override
     public void draw() {
         gameManager.addToGameSummary("Draw!");
+
         endGame();
     }
 
@@ -214,6 +184,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
     @Override
     public void missed(PlayerModel player) {
-        view.hit(player);
+        view.missed(player);
     }
 }

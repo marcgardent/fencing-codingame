@@ -13,5 +13,4 @@ public class TeamModel {
 
     public LinkedList<String> messages = new LinkedList<>();
 
-    public boolean touched = false;
 }

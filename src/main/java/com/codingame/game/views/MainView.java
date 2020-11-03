@@ -21,26 +21,27 @@ public class MainView {
     private TeamView bView;
     private StageView stage;
     private boolean restarted = true;
+    private GameModel model;
 
-
-    public void init(GameModel state, Player playerA, Player playerB) {
+    public void init(GameModel model, Player playerA, Player playerB) {
+        this.model = model;
         stage = new StageView(g);
         stage.init();
 
-        aView = TeamView.fromPlayer(g, state.teamA, playerA)
+        aView = TeamView.fromPlayer(g, model.teamA, playerA)
                 .addScoreUI(StageView.HALF_WIDTH - 110, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH - (TeamView.ENERGY_BAR_SIZE + 20), StageView.LINE - 290)
                 .setPlayerBlock(0, StageView.LINE + 60);
 
-        bView = TeamView.fromPlayer(g, state.teamB, playerB)
+        bView = TeamView.fromPlayer(g, model.teamB, playerB)
                 .addScoreUI(StageView.HALF_WIDTH + 10, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH + 10, StageView.LINE - 290)
                 .setPlayerBlock(StageView.HALF_WIDTH, StageView.LINE + 60);
 
-        viewByTeam.put(state.teamA, aView);
-        viewByTeam.put(state.teamB, bView);
-        viewByPlayer.put(state.teamA.player, aView);
-        viewByPlayer.put(state.teamB.player, bView);
+        viewByTeam.put(model.teamA, aView);
+        viewByTeam.put(model.teamB, bView);
+        viewByPlayer.put(model.teamA.player, aView);
+        viewByPlayer.put(model.teamB.player, bView);
         tick();
     }
 
@@ -59,7 +60,13 @@ public class MainView {
         aView.restart();
         bView.restart();
         stage.reset();
-        stage.addMessage("Halte, En Garde");
+
+        if (model.teamA.player.touched && model.teamB.player.touched) {
+            stage.addMessage("Touchés");
+        } else if (model.teamA.player.touched || model.teamB.player.touched) {
+            stage.addMessage("Touché");
+        }
+        stage.addMessage("Hâlte, En Garde");
     }
 
     public void move(PlayerModel player, int from, int to) {
@@ -71,6 +78,11 @@ public class MainView {
 
     }
 
+
+    public void missed(PlayerModel player) {
+        viewByPlayer.get(player).playerView.missed();
+
+    }
 
     public void playerKo(PlayerModel player) {
         viewByPlayer.get(player).playerView.playerKo();

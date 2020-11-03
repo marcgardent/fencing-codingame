@@ -11,11 +11,15 @@ import com.codingame.gameengine.module.entities.Text;
 public class PlayerView {
 
     private static final double BOTTOM_ANGLE = Math.PI / 8;
-    private static final double MIDDLE_ANGLE = 0;
+    private static final double MIDDLE_ANGLE = -Math.PI / 32;
     private static final double TOP_ANGLE = -Math.PI / 8;
     private static final double BREAK_ANGLE = Math.PI / 3;
-    private static final int ARM_DEFENSIVE = -30;
-    private static final int ARM_OFFENSIVE = 0;
+
+    private static final int ARM_DEFENSIVE_X = -50;
+    private static final int ARM_DEFENSIVE_Y = -60;
+
+    private static final int ARM_OFFENSIVE_X = 0;
+    private static final int ARM_OFFENSIVE_Y = -80;
 
     private final GraphicEntityModule g;
     private final PlayerModel playerModel;
@@ -29,7 +33,6 @@ public class PlayerView {
         this.g = g;
         this.playerModel = playerModel;
     }
-
 
     public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerModel, Player player) {
         PlayerView ret = new PlayerView(g, playerModel);
@@ -48,7 +51,7 @@ public class PlayerView {
                 .setX(-50 + 30).setY(-160 + 5)
                 .setFillColor(Colors.BLACK).setZIndex(10);
 
-        int halfRange = StageView.getLogicToWorld(ActionType.OFFENSIVE_ATTITUDE.offensiveRange / 2);
+        int halfRange = StageView.getLogicToWorld(ActionType.LUNGE.offensiveRange / 2);
 
         Rectangle arm = g.createRectangle()
                 .setWidth(halfRange).setHeight(20)
@@ -69,9 +72,12 @@ public class PlayerView {
         ret.ko = g.createText("~!#?").setFillColor(Colors.WHITE).setX(-20).setY(-220).setFontFamily("Lato").setFontSize(40).setVisible(false);
         ret.energy = g.createText("+2").setFillColor(Colors.WHITE).setX(-10).setY(-260).setFontFamily("Lato")
                 .setFontSize(40).setVisible(false).setStrokeThickness(3).setFontWeight(Text.FontWeight.BOLD);
-        ret.arm = g.createGroup(arm, hand, blade).setX(ARM_DEFENSIVE).setY(-80).setRotation(Math.PI / 4);
+        ret.arm = g.createGroup(arm, hand, blade).setX(ARM_DEFENSIVE_X).setY(ARM_DEFENSIVE_Y).setRotation(Math.PI / 4);
 
-        Group p = g.createGroup(body, ret.ko, ret.arm, head, grid).setScaleX(playerModel.orientation);
+        Group p = g.createGroup(body, ret.ko, ret.arm, head, grid);
+        if (playerModel.orientation < 0) {
+            p.setScaleX(playerModel.orientation).setX(50);
+        }
         Group texts = g.createGroup(ret.ko);
         ret.character = g.createGroup(p, texts).setY((int) (StageView.LINE));
 
@@ -92,26 +98,14 @@ public class PlayerView {
         g.commitEntityState(0, this.energy);
 
         {
-            //posture & attitude
+            //posture
             double angle = MIDDLE_ANGLE;
             if (playerModel.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
             else if (playerModel.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
-            else if (playerModel.attitude == ActionType.BREAK) angle = BREAK_ANGLE;
             this.arm.setRotation(angle);
-            this.arm.setX(ARM_DEFENSIVE);
+            this.arm.setX(ARM_DEFENSIVE_X).setY(ARM_DEFENSIVE_Y);
             g.commitEntityState(0, this.arm);
 
-            //offensive attitude
-            if (playerModel.attitude == ActionType.OFFENSIVE_ATTITUDE) {
-                this.arm.setX(ARM_OFFENSIVE);
-                g.commitEntityState(0.33, this.arm);
-                this.arm.setX(ARM_DEFENSIVE);
-                g.commitEntityState(0.66, this.arm);
-                this.arm.setX(ARM_OFFENSIVE);
-                g.commitEntityState(1, this.arm);
-            } else if (playerModel.attitude == ActionType.DEFENSIVE_ATTITUDE) {
-
-            }
         }
 
         this.character.setX(StageView.getLogicToWorld(playerModel.position));
@@ -139,6 +133,11 @@ public class PlayerView {
     }
 
     public void hit() {
+        this.arm.setX(ARM_OFFENSIVE_X).setY(ARM_OFFENSIVE_Y);
+        g.commitEntityState(1, this.arm);
+    }
 
+    public void missed() {
+        hit();
     }
 }

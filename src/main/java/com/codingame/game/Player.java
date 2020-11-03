@@ -1,6 +1,7 @@
 package com.codingame.game;
 
 import com.codingame.game.models.ActionType;
+import com.codingame.game.models.TeamModel;
 import com.codingame.gameengine.core.AbstractMultiplayerPlayer;
 
 public class Player extends AbstractMultiplayerPlayer {
@@ -21,5 +22,21 @@ public class Player extends AbstractMultiplayerPlayer {
         else if (ret.league > leagueId)
             throw new InvalidAction("Illegal action for your current league level " + (leagueId + 1) + "), available in the league level " + ret.league);
         return ret;
+    }
+
+    public long sendInputs(TeamModel me, TeamModel you) {
+
+        this.sendInputLine(String.format("%d %d %d %d",
+                me.player.getRelativePosition(),
+                me.player.energy, me.score, me.player.posture.code));
+
+        this.sendInputLine(String.format("%d %d %d %d",
+                you.player.getRelativeOpponentPosition(),
+                you.player.energy, you.score, you.player.posture.code));
+
+        long s = System.nanoTime();
+        this.execute();
+        s = System.nanoTime() - s;
+        return s;
     }
 }

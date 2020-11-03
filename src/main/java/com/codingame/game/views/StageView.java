@@ -10,6 +10,9 @@ import java.util.List;
 public class StageView {
 
     public static final int WIDTH = 1920;
+    private static final int X_RING = 50;
+    private static final int WIDTH_RING = WIDTH - X_RING * 2;
+
     public static final int HALF_WIDTH = 960;
     public static final int HEIGHT = 1080;
     public static final int LINE = 800;
@@ -17,7 +20,7 @@ public class StageView {
     private GraphicEntityModule g;
     private Text refereeMessage;
 
-    private List<String> messages = new LinkedList<>();
+    private final List<String> messages = new LinkedList<>();
 
     StageView(GraphicEntityModule g) {
 
@@ -25,7 +28,8 @@ public class StageView {
     }
 
     public static int getLogicToWorld(int v) {
-        return (int) ((float) v / (float) (PlayerModel.MAX_POSITION - PlayerModel.MIN_POSITION) * (float) StageView.WIDTH);
+        return (int) ((float) v / (float) (PlayerModel.MAX_POSITION - PlayerModel.MIN_POSITION)
+                * (float) StageView.WIDTH_RING) + X_RING;
     }
 
     public void init() {
@@ -42,13 +46,13 @@ public class StageView {
 
         //red floor
         g.createRectangle()
-                .setWidth(WIDTH - 100).setHeight(60)
-                .setX(50).setY(LINE - 30)
+                .setWidth(WIDTH_RING).setHeight(60)
+                .setX(X_RING).setY(LINE - 30)
                 .setFillColor(0xD44020).setZIndex(0);
         // lines
         g.createRectangle()
-                .setWidth(WIDTH - 100).setHeight(60)
-                .setX(50).setY(LINE - 30).setFillAlpha(0)
+                .setWidth(WIDTH_RING).setHeight(60)
+                .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
         //spawn line
         g.createRectangle()
@@ -56,9 +60,9 @@ public class StageView {
                 .setX(StageView.getLogicToWorld(PlayerModel.SPAWN_POSITION_A)).setY(LINE - 30).setFillAlpha(0)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
 
-        refereeMessage = g.createText("GO!").setAnchor(0.5).setAlpha(0.5)
+        refereeMessage = g.createText("GO!").setAnchor(0.5)
                 .setFontWeight(Text.FontWeight.BOLD)
-                .setX(HALF_WIDTH).setY(200).setFontSize(200).setFillColor(Colors.WHITE);
+                .setX(HALF_WIDTH).setY(200).setFontSize(100).setFillColor(Colors.WHITE).setAlpha(0.5);
         //.setStrokeColor(Colors.WHITE).setStrokeThickness(20);
     }
 

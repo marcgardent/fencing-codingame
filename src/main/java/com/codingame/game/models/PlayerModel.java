@@ -14,15 +14,11 @@ public class PlayerModel {
     //Energy
     public static final int ENERGY_MAX_SKILL = 20;
     public static final int ENERGY_START = 20;
-    public static final int VELOCITY_GAIN = 5;
-
 
     public int position;
-    public int velocity = 0;
     public int orientation;
     public int energy = ENERGY_START;
     public int energyMax = ENERGY_MAX_SKILL;
-    public int velocitySkill = 0;
     public int doubleForwardSkill = 0;
     public int doubleBackwardSkill = 0;
     public int forwardSkill = 0;
@@ -30,9 +26,7 @@ public class PlayerModel {
     public int offensiveRangeSkill = 0;
     public int defensiveRangeSkill = 0;
     public ActionType posture;
-    public ActionType attitude;
-    public ActionType move;
-
+    public boolean touched = false;
 
     public int getRelativePosition() {
         if (orientation < 0) return MAX_POSITION - position;
@@ -44,10 +38,10 @@ public class PlayerModel {
         else return position;
     }
 
-    public int getMove() {
-        int gain = 0; // velocity * (VELOCITY_GAIN + velocitySkill);
-        if (move == ActionType.BACKWARD_MOVE) return move.move + backwardSkill + gain;
-        if (move == ActionType.FORWARD_MOVE) return move.move + forwardSkill + gain;
+    public int getMove(ActionType move) {
+        int gain = 0;
+        if (move == ActionType.RETREAT) return move.move + backwardSkill + gain;
+        if (move == ActionType.WALK) return move.move + forwardSkill + gain;
         if (move == ActionType.DOUBLE_BACKWARD_MOVE) return move.move + doubleBackwardSkill + gain;
         if (move == ActionType.DOUBLE_FORWARD_MOVE) return move.move + doubleForwardSkill + gain;
         else return move.move + gain;
@@ -55,8 +49,6 @@ public class PlayerModel {
 
     public void reset() {
         posture = ActionType.MIDDLE_POSTURE;
-        attitude = ActionType.DEFENSIVE_ATTITUDE;
-        move = ActionType.SUPPRESSED;
-        velocity = 0;
+        touched = false;
     }
 }
