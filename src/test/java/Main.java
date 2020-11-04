@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         
         MultiplayerGameRunner gameRunner = new MultiplayerGameRunner();
-        gameRunner.addAgent(Player1.class);
+        gameRunner.addAgent(Player.class);
         gameRunner.addAgent(Player2.class);
         gameRunner.setLeagueLevel(2);
         gameRunner.start();

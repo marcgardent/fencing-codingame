@@ -73,16 +73,11 @@ public class MainView {
 
     }
 
-    public void hit(PlayerModel player) {
-        viewByPlayer.get(player).playerView.hit();
+    public void hit(PlayerModel player, boolean succeeded) {
+        viewByPlayer.get(player).playerView.hit(succeeded);
 
     }
 
-
-    public void missed(PlayerModel player) {
-        viewByPlayer.get(player).playerView.missed();
-
-    }
 
     public void playerKo(PlayerModel player) {
         viewByPlayer.get(player).playerView.playerKo();
@@ -94,5 +89,9 @@ public class MainView {
 
     public void scored(TeamModel team) {
         viewByTeam.get(team).scored();
+    }
+
+    public void defended(PlayerModel player, boolean succeeded) {
+        viewByPlayer.get(player).playerView.defended(succeeded);
     }
 }

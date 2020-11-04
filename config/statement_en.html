@@ -28,7 +28,7 @@
                         <th>code</th>
                         <th>energy</th>
                         <th>move</th>
-                        <th>long</th>
+                        <th>distance</th>
                     </tr>
                     <tr>
                         <td>
@@ -132,13 +132,10 @@
                         <const>500</const>
                         ].
                     </li>
-                    <li>long: positive is an attack; negative is a defense; see §Assault.</li>
+                    <li>distance: positive is an attack; negative is a defense; see §Assault.</li>
                 </ul>
                 <h3>Resolutions</h3>
                 <ul>
-                    <li>The players respawn when they collide (<var>myPosition</var> > <var>yourPosition</var>) or an
-                        assault is succeeded.
-                    </li>
                     <li>The players score both when they touch simultaneously (
                         <action>LUNGE</action>
                         vs
@@ -148,17 +145,24 @@
                     <li>Your action is suppressed and the rest of your energy is spent when you request an action
                         without enough energy.
                     </li>
-                    <li>Your move is resolved as far as possible and energy spent when you exceed the boundaries.</li>
+                    <li>The players respawn when:
+                        <ul>
+                            <li>they collide (<var>myPosition</var> > <var>yourPosition</var>)
+                            <li>an assault is succeeded.</li>
+                            <li>a player is outside.</li>
+                        </ul>
+                    <li>the opponent score one point when you are moved outside of the piste.</li>
                 </ul>
                 <h3>Assaults</h3>
                 <p>
-                    <br>Assault resolution depends of longs and positions:
+                    <br>Assault resolution depends on the positions and distances of the actions:
                 </p>
                 <div style='background-color:#444;font-family:monospace;padding:1em'>
-                    <p>isTouchedWhenAttackDefense(strikerPosition:int, defenderPosition:int) -> (defender + Parry_Range)
-                        + (striker + Lunge_Range) > 500;</p>
+                    <p>isTouchedWhenAttackDefense(strikerPosition:int, defenderPosition:int) -> (defender +
+                        Parry_Distance)
+                        + (striker + Lunge_Distance) > 500;</p>
                     <p>isTouchedWhenAttack(strikerPosition:int, defenderPosition:int) -> (defender) + (striker +
-                        Lunge_Range) > 500;</p>
+                        Lunge_Distance) > 500;</p>
                 </div>
 
                 <p>to use it, Normalize the position of your opponent, two sample bellow:</p>

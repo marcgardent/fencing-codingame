@@ -115,7 +115,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
     private void endGame() {
         setScore();
         gameManager.endGame();
-        // TODO refresh view
     }
 
     private void setScore() {
@@ -178,12 +177,12 @@ public class Referee extends AbstractReferee implements MatchObserver {
     }
 
     @Override
-    public void hit(PlayerModel player) {
-        view.hit(player);
+    public void hit(PlayerModel player, boolean succeeded) {
+        view.hit(player, succeeded);
     }
 
     @Override
-    public void missed(PlayerModel player) {
-        view.missed(player);
+    public void defended(PlayerModel player, boolean succeeded) {
+        view.defended(player, succeeded);
     }
 }

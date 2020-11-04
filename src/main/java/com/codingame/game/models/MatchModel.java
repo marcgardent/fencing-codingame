@@ -30,16 +30,29 @@ public class MatchModel {
         actionB = resolveEnergy(state.teamB, actionB);
         actionA = resolveEnergy(state.teamA, actionA);
 
-        applyMove(state.teamA.player, actionA);
-        applyMove(state.teamB.player, actionB);
 
-        setPose(state.teamA, actionA);
-        setPose(state.teamA, actionB);
+        boolean legalMoveA = applyMove(state.teamA.player, actionA);
+        boolean legalMoveB = applyMove(state.teamB.player, actionB);
 
-        resolveScore(actionA, actionB);
+        if (legalMoveA && legalMoveB) {
+            setPose(state.teamA, actionA);
+            setPose(state.teamA, actionB);
+            resolveScore(actionA, actionB);
+        }
+        if (!legalMoveA) {
+            state.teamB.score += 1;
+            observer.scored(state.teamB);
+            state.restart = true;
+
+        }
+        if (!legalMoveB) {
+            state.teamB.score += 1;
+            observer.scored(state.teamB);
+            state.restart = true;
+        }
 
         checkTheEnd();
-        checkTheRestart();
+        checkTheRestart(legalMoveA, legalMoveB);
 
         state.tick += 1;
         return state;
@@ -60,7 +73,7 @@ public class MatchModel {
         }
     }
 
-    private void checkTheRestart() {
+    private void checkTheRestart(boolean legalMoveA, boolean legalMoveB) {
         if (state.teamA.player.touched || state.teamB.player.touched) {
             state.restart = true;
         } else if (state.teamA.player.position >= state.teamB.player.position) {
@@ -89,46 +102,52 @@ public class MatchModel {
     private void resolveScore(ActionType actionA, ActionType actionB) {
         state.teamA.player.touched = false;
         state.teamB.player.touched = false;
-
-        if (actionA.offensiveRange > 0) {
+        if (actionA.distance > 0) {
             state.teamB.player.touched = isTouched(state.teamA, actionA, state.teamB, actionB);
             if (state.teamB.player.touched) {
                 state.teamA.score += 1;
                 observer.scored(state.teamA);
             }
+        } else if (actionB.distance < 0) {
+            observer.defended(state.teamB.player, false);
         }
 
-        if (actionB.offensiveRange > 0) {
+        if (actionB.distance > 0) {
             state.teamA.player.touched = isTouched(state.teamB, actionB, state.teamA, actionA);
             if (state.teamA.player.touched) {
                 state.teamB.score += 1;
                 observer.scored(state.teamB);
             }
+        } else if (actionA.distance < 0) {
+            observer.defended(state.teamA.player, false);
         }
     }
 
     private boolean isTouched(TeamModel striker, ActionType offensiveAction, TeamModel defender, ActionType defenseAction) {
-        int defenseRange = (state.teamA.player.posture == state.teamB.player.posture) ? defenseAction.defensiveRange + defender.player.defensiveRangeSkill : 0;
-        int offensiveRange = offensiveAction.offensiveRange + striker.player.offensiveRangeSkill;
+        int defenseDistance = (state.teamA.player.posture == state.teamB.player.posture && defenseAction.distance < 0)
+                ? defenseAction.distance + defender.player.defensiveRangeSkill : 0;
+        int offensiveDistance = offensiveAction.distance + striker.player.offensiveRangeSkill;
 
-        int defenseLength = defender.player.getRelativePosition() - defenseRange;
-        int offensiveLength = striker.player.getRelativePosition() + offensiveRange;
+        int defenseLength = defender.player.getRelativePosition() + defenseDistance;
+        int offensiveLength = striker.player.getRelativePosition() + offensiveDistance;
 
         if (defenseLength + offensiveLength > PlayerModel.MAX_POSITION) {
-            if (defenseAction.defensiveRange > 0) {
-                defender.messages.add(defenseAction.name() + "(" + defenseRange + ")" + " failed");
+            if (defenseAction.distance > 0) {
+                defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " failed");
+                observer.defended(defender.player, false);
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveRange + ")" + " touched");
-            observer.hit(striker.player);
-            observer.missed(striker.player);
+            striker.messages.add(offensiveAction.name() + "(" + offensiveDistance + ")" + " touched");
+            observer.hit(striker.player, true);
+
             return true;
         } else {
-            if (defenseAction.defensiveRange > 0) {
-                defender.messages.add(defenseAction.name() + "(" + defenseRange + ")" + " succeeded");
+            if (defenseAction.distance > 0) {
+                defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " succeeded");
+                observer.hit(defender.player, true);
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveRange + ")" + " failed");
-            observer.missed(striker.player);
-            observer.hit(striker.player);
+            striker.messages.add(offensiveAction.name() + "(" + offensiveDistance + ")" + " failed");
+            observer.hit(striker.player, false);
+
             return false;
         }
     }
@@ -141,22 +160,24 @@ public class MatchModel {
         }
     }
 
-    private void applyMove(PlayerModel player, ActionType action) {
+    private boolean applyMove(PlayerModel player, ActionType action) {
+        boolean ret = true;
         if (action.move != 0) {
             int move = player.getMove(action);
             if (move != 0) {
                 int p = player.position + player.orientation * move;
-                if (p == PlayerModel.MIN_POSITION || p == PlayerModel.MAX_POSITION) {
+                if (p < PlayerModel.MIN_POSITION || p > PlayerModel.MAX_POSITION) {
                     observer.outside(player);
+                    ret = false;
                 }
                 p = Math.max(p, PlayerModel.MIN_POSITION);
                 p = Math.min(p, PlayerModel.MAX_POSITION);
 
                 observer.move(player, p, player.position);
                 player.position = p;
-
             }
         }
+        return ret;
     }
 
 

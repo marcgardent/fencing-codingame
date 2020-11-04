@@ -9,6 +9,7 @@ Score 20 points!
 INPUT
 myPosition: range [0,500], step 50, init 200|300
 myEnergy: range [0,20] init 20
+myEnergy: range [0,20] init 20
 myScore: range [0,20] init 0
 myPosture: middle 6, top 7 bottom 8
 yourPosition: range [0,500], step 50, init 200|300

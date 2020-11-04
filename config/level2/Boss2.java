@@ -1,7 +1,6 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.io.*;
+import java.math.*;
 
 enum ActionType {
 
@@ -120,30 +119,27 @@ class Player {
             boolean youCanLunge = 0 < yourEnergy + ActionType.LUNGE.energy && isTouchedWhenAttack((500 - yourPosition), myPosition);
 
             boolean iMustLunge = 0 < myEnergy + ActionType.LUNGE.energy && isTouchedWhenAttackDefense(myPosition, (500 - yourPosition));
-            boolean youMustLunge = 0 < yourEnergy + ActionType.LUNGE.energy && isTouchedWhenAttackDefense((500 - yourPosition), myPosition);
+            boolean youMustLunge =0 < yourEnergy + ActionType.LUNGE.energy && isTouchedWhenAttackDefense((500 - yourPosition), myPosition);
 
             boolean iCanPostureMiddle = 0 < yourEnergy + ActionType.MIDDLE_POSTURE.energy && myPosture != ActionType.MIDDLE_POSTURE;
             boolean iCanPostureTop = 0 < yourEnergy + ActionType.MIDDLE_POSTURE.energy && myPosture != ActionType.TOP_POSTURE;
             boolean iCanPostureBottom = 0 < yourEnergy + ActionType.MIDDLE_POSTURE.energy && myPosture != ActionType.BOTTOM_POSTURE;
 
-            System.err.printf("ME  canWalk=%b canRetreat=%b canParry=%b canLunge=%b mustLunge=%b %n", iCanWalk, iCanRetreat, iCanParry, iCanLunge, iMustLunge);
-            System.err.printf("YOU canWalk=%b canRetreat=%b canParry=%b canLunge=%b mustLunge=%b %n", youCanWalk, youCanRetreat, youCanParry, youCanLunge, youMustLunge);
+            System.err.printf("ME  canWalk=%b canRetreat=%b canParry=%b canLunge=%b mustLunge=%b %n", iCanWalk, iCanRetreat,iCanParry,iCanLunge,iMustLunge);
+            System.err.printf("YOU canWalk=%b canRetreat=%b canParry=%b canLunge=%b mustLunge=%b %n", youCanWalk, youCanRetreat,youCanParry,youCanLunge,youMustLunge);
 
             ArrayList<ActionType> actions = new ArrayList<ActionType>();
 
             actions.add(ActionType.BREAK);
-            if (iCanWalk) actions.add(ActionType.WALK);
-            if (iCanRetreat) actions.add(ActionType.RETREAT);
-            if (youCanLunge) actions.add(ActionType.PARRY);
-            if (iCanAttack) actions.add(ActionType.LUNGE);
-            if (iCanPostureMiddle) actions.add(ActionType.MIDDLE_POSTURE);
-            if (iCanPostureTop) actions.add(ActionType.TOP_POSTURE);
-            if (iCanPostureBottom) actions.add(ActionType.TOP_POSTURE);
+            if(iCanWalk) actions.add(ActionType.WALK);
+            if(iCanRetreat) actions.add(ActionType.RETREAT);
+            if(youCanLunge) actions.add(ActionType.PARRY);
+            if(iCanAttack) actions.add(ActionType.LUNGE);
+            if(iCanPostureMiddle) actions.add(ActionType.MIDDLE_POSTURE);
+            if(iCanPostureTop) actions.add(ActionType.TOP_POSTURE);
+            if(iCanPostureBottom) actions.add(ActionType.TOP_POSTURE);
 
             ActionType myAction = getRandom(actions.stream().toArray(ActionType[]::new));
-
-
-            myAction = myPosture != ActionType.TOP_POSTURE ? ActionType.TOP_POSTURE : myAction;
 
             System.err.printf("Playing %s, steps: %d %n", myAction.name(), distance);
             System.out.printf("%d%n", myAction.code);

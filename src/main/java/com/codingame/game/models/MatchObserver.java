@@ -18,7 +18,7 @@ public interface MatchObserver {
 
     void energyChanged(PlayerModel player, int delta);
 
-    void hit(PlayerModel player);
+    void hit(PlayerModel player, boolean succeeded);
 
-    void missed(PlayerModel player);
+    void defended(PlayerModel player, boolean succeeded);
 }
