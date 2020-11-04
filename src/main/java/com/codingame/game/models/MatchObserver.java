@@ -21,4 +21,6 @@ public interface MatchObserver {
     void hit(PlayerModel player, boolean succeeded);
 
     void defended(PlayerModel player, boolean succeeded);
+
+    void doped(PlayerModel player, ActionType a);
 }

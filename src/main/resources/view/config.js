@@ -1,4 +1,5 @@
 import { GraphicEntityModule } from './entity-module/GraphicEntityModule.js';
+import { TooltipModule } from './tooltip-module/TooltipModule.js';
 
 export const playerColors = [
   '#49cc35', // green
@@ -6,5 +7,6 @@ export const playerColors = [
 ];
 
 export const modules = [
-	GraphicEntityModule
+	GraphicEntityModule,
+	TooltipModule
 ];

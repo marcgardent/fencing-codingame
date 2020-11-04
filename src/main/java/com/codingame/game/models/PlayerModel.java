@@ -1,5 +1,7 @@
 package com.codingame.game.models;
 
+import java.util.ArrayList;
+
 public class PlayerModel {
 
     public static final int LEFT_ORIENTATION = 1;
@@ -19,14 +21,18 @@ public class PlayerModel {
     public int orientation;
     public int energy = ENERGY_START;
     public int energyMax = ENERGY_MAX_SKILL;
+
     public int doubleForwardSkill = 0;
     public int doubleBackwardSkill = 0;
     public int forwardSkill = 0;
     public int backwardSkill = 0;
+
     public int offensiveRangeSkill = 0;
     public int defensiveRangeSkill = 0;
     public ActionType posture;
     public boolean touched = false;
+
+    public ArrayList<ActionType> dopings = new ArrayList<ActionType>();
 
     public int getRelativePosition() {
         if (orientation < 0) return MAX_POSITION - position;

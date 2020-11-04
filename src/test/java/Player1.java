@@ -143,7 +143,7 @@ class Player {
             ActionType myAction = getRandom(actions.stream().toArray(ActionType[]::new));
 
 
-            myAction = myPosture != ActionType.TOP_POSTURE ? ActionType.TOP_POSTURE : myAction;
+            //myAction = myPosture != ActionType.TOP_POSTURE ? ActionType.TOP_POSTURE : myAction;
 
             System.err.printf("Playing %s, steps: %d %n", myAction.name(), distance);
             System.out.printf("%d%n", myAction.code);

@@ -17,6 +17,7 @@ public class PlayerView {
 
     private static final int ARM_DEFENSIVE_X = -50;
     private static final int ARM_DEFENSIVE_Y = -60;
+    private static final int ARM_WIDTH = 100;
 
     private static final int ARM_OFFENSIVE_X = 0;
     private static final int ARM_OFFENSIVE_Y = -80;
@@ -39,7 +40,12 @@ public class PlayerView {
     }
 
     public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerModel, Player player) {
+
         PlayerView ret = new PlayerView(g, playerModel);
+
+
+        ret.Color = player.getColorToken();
+
         Rectangle body = g.createRectangle()
                 .setWidth(50).setHeight(100)
                 .setX(-50).setY(-100)
@@ -55,22 +61,22 @@ public class PlayerView {
                 .setX(-50 + 30).setY(-160 + 5)
                 .setFillColor(Colors.BLACK).setZIndex(10);
 
-        int halfRange = StageView.getLogicToWorld(ActionType.LUNGE.distance / 2);
+        int range = StageView.getLogicToWorld(ActionType.LUNGE.distance);
 
         Rectangle arm = g.createRectangle()
-                .setWidth(halfRange).setHeight(20)
+                .setWidth(ARM_WIDTH).setHeight(20)
                 .setX(0).setY(-10)
                 .setFillColor(Colors.WHITE).setZIndex(10);
 
         Rectangle hand = g.createRectangle()
                 .setWidth(20).setHeight(20)
-                .setX(halfRange - 20).setY(-10)
+                .setX(ARM_WIDTH - 20).setY(-10)
                 .setLineWidth(4).setLineColor(Colors.WHITE)
                 .setFillColor(player.getColorToken()).setZIndex(10);
 
         Rectangle blade = g.createRectangle()
-                .setWidth(halfRange + 10).setHeight(10)
-                .setX(halfRange).setY(-5)
+                .setWidth(range - ARM_WIDTH).setHeight(10)
+                .setX(ARM_WIDTH).setY(-5)
                 .setFillColor(player.getColorToken()).setZIndex(10);
 
         ret.attackFlag = g.createSprite().setImage("attack.png").setVisible(false)
@@ -85,6 +91,10 @@ public class PlayerView {
         ret.knockoutFlag = g.createSprite().setImage("knockout.png").setVisible(false)
                 .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
+//        //TODO DISABLE DEBUG
+//        Line debug = g.createLine().setX(range).setY(0).setX2(range)
+//                .setY2(-100).setZIndex(20).setLineColor(ret.Color).setLineWidth(5);
+
         Group flags = g.createGroup(ret.attackFlag, ret.defenceFlag, ret.energyFlag, ret.knockoutFlag)
                 .setX(-25).setY(-220);
 
@@ -92,11 +102,11 @@ public class PlayerView {
 
         Group p = g.createGroup(body, flags, head, grid, ret.arm, flags);
         if (playerModel.orientation < 0) {
-            p.setScaleX(playerModel.orientation).setX(50);
+            p.setScaleX(playerModel.orientation);
         }
 
         ret.character = g.createGroup(p).setY((int) (StageView.LINE));
-        ret.Color = player.getColorToken();
+
 
         return ret;
     }

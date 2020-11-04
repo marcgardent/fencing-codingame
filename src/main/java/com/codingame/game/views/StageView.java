@@ -11,7 +11,7 @@ public class StageView {
 
     public static final int WIDTH = 1920;
     private static final int X_RING = 50;
-    private static final int WIDTH_RING = WIDTH - X_RING * 2;
+    private static final int WIDTH_RING = WIDTH - (X_RING * 2);
 
     public static final int HALF_WIDTH = 960;
     public static final int HEIGHT = 1080;
@@ -55,10 +55,17 @@ public class StageView {
                 .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
         //spawn line
+        int spanWidth = getLogicToWorld(PlayerModel.SPAWN_POSITION_B) - getLogicToWorld(PlayerModel.SPAWN_POSITION_A);
         g.createRectangle()
-                .setWidth(StageView.getLogicToWorld(PlayerModel.SPAWN_POSITION_B - PlayerModel.SPAWN_POSITION_A)).setHeight(60)
                 .setX(StageView.getLogicToWorld(PlayerModel.SPAWN_POSITION_A)).setY(LINE - 30).setFillAlpha(0)
+                .setWidth(spanWidth).setHeight(60)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
+
+//        //TODO remove DEBUG
+//        for (int i = 0; i <=500; i+=20) {
+//            g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getLogicToWorld(i)).setY(600);
+//            g.createText(Integer.toString(i)).setX(getLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
+//        }
 
         refereeMessage = g.createText("GO!").setAnchor(0.5)
                 .setFontWeight(Text.FontWeight.BOLD)

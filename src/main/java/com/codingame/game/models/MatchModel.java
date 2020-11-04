@@ -1,5 +1,6 @@
 package com.codingame.game.models;
 
+
 public class MatchModel {
     public static final int MAX_TICK = 400;
 
@@ -30,6 +31,8 @@ public class MatchModel {
         actionB = resolveEnergy(state.teamB, actionB);
         actionA = resolveEnergy(state.teamA, actionA);
 
+        setDoping(state.teamA, actionA);
+        setDoping(state.teamB, actionB);
 
         boolean legalMoveA = applyMove(state.teamA.player, actionA);
         boolean legalMoveB = applyMove(state.teamB.player, actionB);
@@ -56,6 +59,31 @@ public class MatchModel {
 
         state.tick += 1;
         return state;
+    }
+
+    private void setDoping(TeamModel team, ActionType a) {
+        PlayerModel player = team.player;
+
+        if (a.doping > 0) {
+            if (a == ActionType.DEFENSIVE_RANGE_SKILL) {
+                player.defensiveRangeSkill += a.doping;
+            } else if (a == ActionType.BACKWARD_SKILL) {
+                player.backwardSkill += a.doping;
+            } else if (a == ActionType.DOUBLE_BACKWARD_SKILL) {
+                player.doubleBackwardSkill += a.doping;
+            } else if (a == ActionType.FORWARD_SKILL) {
+                player.forwardSkill += a.doping;
+            } else if (a == ActionType.DOUBLE_FORWARD_SKILL) {
+                player.doubleBackwardSkill += a.doping;
+            } else if (a == ActionType.OFFENSIVE_RANGE_SKILL) {
+                player.offensiveRangeSkill += a.doping;
+            } else if (a == ActionType.ENERGY_MAX_SKILL) {
+                player.energyMax += a.doping;
+            }
+
+            player.dopings.add(a);
+            observer.doped(player, a);
+        }
     }
 
     private void checkTheEnd() {
@@ -131,7 +159,7 @@ public class MatchModel {
         int defenseLength = defender.player.getRelativePosition() + defenseDistance;
         int offensiveLength = striker.player.getRelativePosition() + offensiveDistance;
 
-        if (defenseLength + offensiveLength > PlayerModel.MAX_POSITION) {
+        if (defenseLength + offensiveLength >= PlayerModel.MAX_POSITION) {
             if (defenseAction.distance > 0) {
                 defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " failed");
                 observer.defended(defender.player, false);

@@ -6,6 +6,7 @@ import com.codingame.gameengine.core.AbstractPlayer.TimeoutException;
 import com.codingame.gameengine.core.AbstractReferee;
 import com.codingame.gameengine.core.GameManager;
 import com.codingame.gameengine.core.MultiplayerGameManager;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
 
 import java.util.Random;
@@ -15,6 +16,9 @@ public class Referee extends AbstractReferee implements MatchObserver {
     private MultiplayerGameManager<Player> gameManager;
     @Inject
     private MainView view;
+
+    @Inject
+    TooltipModule tooltips;
 
     private GameModel state;
     private MatchModel match;
@@ -179,10 +183,20 @@ public class Referee extends AbstractReferee implements MatchObserver {
     @Override
     public void hit(PlayerModel player, boolean succeeded) {
         view.hit(player, succeeded);
+
+        if (succeeded) {
+            Player playerCodeInGame = gameManager.getPlayer(player == state.teamA.player ? 0 : 1);
+            gameManager.addTooltip(playerCodeInGame, "touché!");
+        }
     }
 
     @Override
     public void defended(PlayerModel player, boolean succeeded) {
         view.defended(player, succeeded);
+    }
+
+    @Override
+    public void doped(PlayerModel player, ActionType a) {
+        //todo UI
     }
 }

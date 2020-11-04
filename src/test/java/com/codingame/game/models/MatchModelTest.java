@@ -21,61 +21,71 @@ public class MatchModelTest {
     @CartesianProductTest
     @CartesianValueSource(ints = {TOP_POSTURE, BOTTOM_POSTURE, MIDDLE_POSTURE})
     @CartesianValueSource(ints = {100, 400, 250})
-    public void DoubleTouch(int postureCode, int position) {
+    @CartesianValueSource(booleans = {true, false})
+    public void DoubleTouch(int postureCode, int position, boolean AB) {
         ActionType posture = ActionType.fromInteger(postureCode);
         MatchModel target = new MatchModel(new DummyObserver());
         GameModel model = target.getState();
 
-        model.teamA.player.position = position;
-        model.teamB.player.position = ActionType.LUNGE.distance + position;
-        model.teamA.player.posture = model.teamB.player.posture = posture;
+        TeamModel left = AB ? model.teamA : model.teamB;
+        TeamModel right = AB ? model.teamB : model.teamA;
+
+        left.player.position = position;
+        right.player.position = ActionType.LUNGE.distance * left.player.orientation + position;
+        left.player.posture = right.player.posture = posture;
+
         target.tick(ActionType.LUNGE, ActionType.LUNGE);
-        assertTrue(model.teamA.player.touched, "touched A");
-        assertTrue(model.teamB.player.touched, "touched B");
-        assertEquals(1, model.teamA.score, "score A +1");
-        assertEquals(1, model.teamB.score, "score B +1");
+        assertTrue(left.player.touched, "touched A");
+        assertTrue(right.player.touched, "touched B");
+        assertEquals(1, left.score, "score A +1");
+        assertEquals(1, right.score, "score B +1");
         assertTrue(model.restart, "restarted");
     }
 
     @CartesianProductTest
     @CartesianValueSource(ints = {TOP_POSTURE, BOTTOM_POSTURE, MIDDLE_POSTURE})
     @CartesianValueSource(ints = {100, 400, 250})
-    public void DoubleTouchMissed1pixel(int postureCode, int position) {
+    @CartesianValueSource(booleans = {true, false})
+    public void DoubleTouchMissed1pixel(int postureCode, int position, boolean AB) {
         ActionType posture = ActionType.fromInteger(postureCode);
         MatchModel target = new MatchModel(new DummyObserver());
         GameModel model = target.getState();
 
-        model.teamA.player.position = position;
-        model.teamB.player.position = ActionType.LUNGE.distance + position + 1;
-        model.teamA.player.posture = model.teamB.player.posture = posture;
+        TeamModel left = AB ? model.teamA : model.teamB;
+        TeamModel right = AB ? model.teamB : model.teamA;
 
+        left.player.position = position;
+        right.player.position = (ActionType.LUNGE.distance + 1) * left.player.orientation + position;
+        left.player.posture = model.teamB.player.posture = posture;
         target.tick(ActionType.LUNGE, ActionType.LUNGE);
-        assertEquals(model.teamB.player.touched, model.teamA.player.touched, "both");
-        assertFalse(model.teamA.player.touched, "touched A");
-        assertFalse(model.teamB.player.touched, "touched B");
+        assertFalse(left.player.touched, "touched L");
+        assertFalse(right.player.touched, "touched R");
         assertFalse(model.restart, "restarted");
-        assertEquals(0, model.teamA.score, "score A +0");
-        assertEquals(0, model.teamB.score, "score B +0");
+        assertEquals(0, left.score, "score L +0");
+        assertEquals(0, right.score, "score R +0");
 
     }
-
 
     @CartesianProductTest
     @CartesianValueSource(ints = {TOP_POSTURE, BOTTOM_POSTURE, MIDDLE_POSTURE})
     @CartesianValueSource(ints = {100, 400, 250})
-    public void Parry(int postureCode, int position) {
+    @CartesianValueSource(booleans = {true, false})
+    public void Parry(int postureCode, int position, boolean AB) {
         ActionType posture = ActionType.fromInteger(postureCode);
         MatchModel target = new MatchModel(new DummyObserver());
         GameModel model = target.getState();
 
-        model.teamA.player.position = position;
-        model.teamB.player.position = ActionType.LUNGE.distance + position;
-        model.teamA.player.posture = model.teamB.player.posture = posture;
+        TeamModel left = AB ? model.teamA : model.teamB;
+        TeamModel right = AB ? model.teamB : model.teamA;
+
+        left.player.position = position;
+        right.player.position = ActionType.LUNGE.distance * left.player.orientation + position;
+        left.player.posture = right.player.posture = posture;
         target.tick(ActionType.LUNGE, ActionType.PARRY);
-        assertFalse(model.teamA.player.touched, "touched A");
-        assertFalse(model.teamB.player.touched, "touched B");
-        assertEquals(0, model.teamA.score, "score A +0");
-        assertEquals(0, model.teamB.score, "score B +0");
+        assertFalse(left.player.touched, "touched S");
+        assertFalse(right.player.touched, "touched D");
+        assertEquals(0, left.score, "score S +0");
+        assertEquals(0, right.score, "score D +0");
         assertFalse(model.restart, "restarted");
     }
 
@@ -128,6 +138,11 @@ public class MatchModelTest {
 
         @Override
         public void defended(PlayerModel player, boolean succeeded) {
+
+        }
+
+        @Override
+        public void doped(PlayerModel player, ActionType a) {
 
         }
     }

@@ -80,8 +80,9 @@ public class Player2 {
             if (youCanLunge) actions.add(ActionType.PARRY);
             if (iCanAttack) actions.add(ActionType.LUNGE);
 
-            //ActionType myAction = getRandom(actions.stream().toArray(ActionType[]::new));
-            ActionType myAction = myPosture != ActionType.BOTTOM_POSTURE ? ActionType.BOTTOM_POSTURE : ActionType.BREAK;
+            ActionType myAction = getRandom(actions.stream().toArray(ActionType[]::new));
+            myAction = ActionType.RETREAT;
+            //ActionType myAction = myPosture != ActionType.BOTTOM_POSTURE ? ActionType.BOTTOM_POSTURE : ActionType.BREAK;
             System.err.printf("Playing %s, steps: %d %n", myAction.name(), distance);
             System.out.printf("%d%n", myAction.code);
         }
