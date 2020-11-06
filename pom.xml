@@ -26,6 +26,11 @@
         </dependency>
         <dependency>
             <groupId>com.codingame.gameengine</groupId>
+            <artifactId>module-toggle</artifactId>
+            <version>3.4.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codingame.gameengine</groupId>
             <artifactId>module-entities</artifactId>
             <version>${gamengine.version}</version>
         </dependency>
@@ -55,5 +60,6 @@
             <artifactId>junit-pioneer</artifactId>
             <version>1.0.0</version>
         </dependency>
+
     </dependencies>
 </project>

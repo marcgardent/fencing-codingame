@@ -1,0 +1,379 @@
+<div class="statement-body">
+    <!-- GOAL -->
+    <div class="statement-section statement-goal">
+        <h2>
+            <span class="icon icon-goal">&nbsp;</span>
+            <span>The Goal</span>
+        </h2>
+        <img class="statement-goal-content">
+        <p>
+            Hit your opponent and manage our energy to score 20 points!
+        </p>
+    </div>
+    <!-- RULES -->
+    <div class="statement-section statement-rules">
+        <h2>
+            <span class="icon icon-rules">&nbsp;</span>
+            <span>Rules</span>
+        </h2>
+        <div>
+            <div class="statement-rules-content">
+                <h3>Actions</h3>
+                <p><br>Two players choose simultaneously only one action among fives: break and walk and retreat and
+                    lunge and parry.
+                    in details:</p>
+                <table>
+                    <tr>
+                        <th>name</th>
+                        <th>code</th>
+                        <th>energy</th>
+                        <th>move</th>
+                        <th>distance</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <action>BREAK</action>
+                        </td>
+                        <td>
+                            <const>1</const>
+                        </td>
+                        <td>
+                            <const>2</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <action>WALK</action>
+                        </td>
+                        <td>
+                            <const>2</const>
+                        </td>
+                        <td>
+                            <const>-1</const>
+                        </td>
+                        <td>
+                            <const>30</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <action>RETREAT</action>
+                        </td>
+                        <td>
+                            <const>3</const>
+                        </td>
+                        <td>
+                            <const>-1</const>
+                        </td>
+                        <td>
+                            <const>-30</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <action>LUNGE</action>
+                            (attack)
+                        </td>
+                        <td>
+                            <const>4</const>
+                        </td>
+                        <td>
+                            <const>-2</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                        <td>
+                            <const>30</const>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <action>PARRY</action>
+                            (defense)
+                        </td>
+                        <td>
+                            <const>5</const>
+                        </td>
+                        <td>
+                            <const>-2</const>
+                        </td>
+                        <td>
+                            <const>0</const>
+                        </td>
+                        <td>
+                            <const>-30</const>
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="color:#7cc576;background-color:rgba( 124 , 197 , 118 , 0.1 );">
+                    Added in the second league:
+                    <table>
+                        <tr>
+                            <th>name</th>
+                            <th>code</th>
+                            <th>energy</th>
+                            <th>move</th>
+                            <th>distance</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <action>MIDDLE_POSTURE</action>
+                            </td>
+                            <td>
+                                <const>6</const>
+                            </td>
+                            <td>
+                                <const>-1</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <action>TOP_POSTURE</action>
+                            </td>
+                            <td>
+                                <const>7</const>
+                            </td>
+                            <td>
+                                <const>-1</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <action>BOTTOM_POSTURE</action>
+                            </td>
+                            <td>
+                                <const>8</const>
+                            </td>
+                            <td>
+                                <const>-1</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                            <td>
+                                <const>0</const>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <ul>
+                    <li>code: number used to communicate with the referee.</li>
+                    <li>energy: consume and produce in the range [
+                        <const>0</const>
+                        ,
+                        <const>20</const>
+                        ].
+                    </li>
+                    <li>move: apply a move of your character in the range [
+                        <const>0</const>
+                        ,
+                        <const>500</const>
+                        ].
+                    </li>
+                    <li>distance: positive is an attack; negative is a defense; see §Assault.</li>
+                </ul>
+                <h3>Resolutions</h3>
+                <ul>
+                    <li>The players score both when they touch simultaneously (
+                        <action>LUNGE</action>
+                        vs
+                        <action>LUNGE</action>
+                        are resolved).
+                    </li>
+                    <li>Your action is suppressed and the rest of your energy is spent when you request an action
+                        without enough energy.
+                    </li>
+                    <li>The players respawn when:
+                        <ul>
+                            <li>they collide (<var>myPosition</var> > <var>yourPosition</var>)
+                            <li>an assault is succeeded.</li>
+                            <li>a player is outside.</li>
+                        </ul>
+                    <li>the opponent score one point when you are moved outside of the piste.</li>
+                </ul>
+                <h3>Assaults</h3>
+                <p>
+                    <br>Assault resolution depends on the positions and distances of the actions:
+                </p>
+                <div style='background-color:#444;font-family:monospace;padding:1em'>
+                    <p>isTouchedWhenAttackDefense(strikerPosition:int, defenderPosition:int) -> (defender +
+                        Parry_Distance)
+                        + (striker + Lunge_Distance) > 500;</p>
+                    <p>isTouchedWhenAttack(strikerPosition:int, defenderPosition:int) -> (defender) + (striker +
+                        Lunge_Distance) > 500;</p>
+                </div>
+
+                <p>to use it, Normalize the position of your opponent, two sample bellow:</p>
+                <div style='background-color:#444;font-family:monospace;padding:1em'>
+                    <p>yourPositionNormalized = (500 - yourPosition)</p>
+                    <p>myAttackYouDefend = isTouchedWhenAttackDefense(myPosition, yourPositionNormalized)</p>
+                    <p>youAttack = isTouchedWhenAttack(yourPositionNormalized, myPosition)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PROTOCOL -->
+    <div class="statement-section statement-protocol">
+        <h2>
+            <span class="icon icon-protocol">&nbsp;</span>
+            <span>Game I/O</span>
+        </h2>
+        <!-- Protocol block -->
+        <div class="blk">
+            <div class="title">Input for one game turn</div>
+            <div class="text">
+                <span class="statement-lineno">Line 1:</span><var>myPosition</var>&nbsp;<var>myEnergy</var>&nbsp;<var>myScore</var>&nbsp;<var>myPosture</var>
+            </div>
+            <div class="text">
+                <span class="statement-lineno">Line 2:</span><var>yourPosition</var>&nbsp;<var>yourEnergy</var>&nbsp;<var>yourScore</var>&nbsp;<var>yourPosture</var>
+            </div>
+            <div class="text">
+                <ul>
+                    <li><var>myPosition</var>, <var>yourPosition</var>: range [
+                        <const>0</const>
+                        ,
+                        <const>500</const>
+                        ], respawn (me:
+                        <const>200</const>
+                        , you:
+                        <const>300</const>
+                        )
+                    </li>
+                    <li><var>myEnergy</var>, <var>yourEnergy</var>: range [
+                        <const>0</const>
+                        ,
+                        <const>20</const>
+                        ], init
+                        <const>20</const>
+                    </li>
+                    <li><var>myScore</var>, <var>yourScore</var>: range [
+                        <const>0</const>
+                        ,
+                        <const>20</const>
+                        ], init
+                        <const>0</const>
+                    </li>
+                    <li><var>myPosture</var>, <var>yourPosture</var>:
+                        <action>MIDDLE_POSTURE</action>
+                        =
+                        <const>6</const>
+                        ,
+                        <action>TOP_POSTURE</action>
+                        =
+                        <const>7</const>
+                        ,
+                        <action>BOTTOM_POSTURE</action>
+                        =
+                        <const>8</const>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Protocol block -->
+        <div class="blk">
+            <div class="title">Output for one game turn</div>
+            <div class="text">
+                <span class="statement-lineno">Line 1:</span><var>myAction</var>
+            </div>
+            <div class="text">
+                possibles values:
+                <ul>
+                    <li>
+                        <action>BREAK</action>
+                        =
+                        <const>1</const>
+                    </li>
+                    <li>
+                        <action>WALK</action>
+                        =
+                        <const>2</const>
+                    </li>
+                    <li>
+                        <action>RETRAIT</action>
+                        =
+                        <const>3</const>
+                    </li>
+                    <li>
+                        <action>LUNGE</action>
+                        =
+                        <const>4</const>
+                    </li>
+                    <li>
+                        <action>PARRY</action>
+                        =
+                        <const>5</const>
+                    </li>
+                </ul>
+                <div style="color:#7cc576;background-color:rgba( 124 , 197 , 118 , 0.1 );">
+                    <ul>
+                        <li>
+                            <action>MIDDLE_POSTURE</action>
+                            =
+                            <const>6</const>
+                        </li>
+                        <li>
+                            <action>TOP_POSTURE</action>
+                            =
+                            <const>7</const>
+                        </li>
+                        <li>
+                            <action>BOTTOM_POSTURE</action>
+                            =
+                            <const>8</const>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="statement-victory-conditions">
+        <div class="icon victory"></div>
+        <div class="blk">
+            <div class="title">Victory Conditions</div>
+            <div class="text">
+                <ul style="padding-bottom:0">
+                    <li>Score more points than your opponent(s) at games end.</li>
+                    <li>The final result for your ranking equals <var>myScore</var> - <var>YourScore</var>.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="statement-lose-conditions">
+        <div class="icon lose"></div>
+        <div class="blk">
+            <div class="title">Loss Conditions</div>
+            <div class="text">
+                <ul style="padding-bottom:0">
+                    <li>Score fewer points than your opponent(s) at games end.</li>
+                    <li>You do not respond in due time or output an invalid command.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

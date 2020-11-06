@@ -25,8 +25,18 @@ public class Referee extends AbstractReferee implements MatchObserver {
     private Random random;
     private int leagueId;
 
+    private static String formatDelta(int d) {
+        return "<constant>" + (d > 0 ? "+" + d : Integer.toString(d)) + "</constant>";
+    }
+
+    private static String formatQuantity(int d) {
+        return "<constant>" + d + "</constant>";
+    }
+
     @Override
     public void init() {
+        exportAutoDoc();
+
         random = new Random(gameManager.getSeed());
         leagueId = gameManager.getLeagueLevel() - 1;
         match = new MatchModel(this);
@@ -124,9 +134,11 @@ public class Referee extends AbstractReferee implements MatchObserver {
     private void setScore() {
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
-
-        playerA.setScore(playerA.isActive() ? state.teamA.score - state.teamB.score : -20);
-        playerB.setScore(playerB.isActive() ? state.teamB.score - state.teamA.score : -20);
+        boolean nonCombativityPenality = state.teamA.score == 0 && state.teamB.score == 0;
+        boolean penalityA = playerA.isActive() && state.teamA.player.energy >= 0 && !nonCombativityPenality;
+        boolean penalityB = playerA.isActive() && state.teamB.player.energy >= 0 && !nonCombativityPenality;
+        playerA.setScore(penalityA ? (state.teamA.score - state.teamB.score) : -20);
+        playerB.setScore(penalityB ? (state.teamB.score - state.teamA.score) : -20);
 
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(
                 "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
@@ -146,7 +158,8 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
     @Override
     public void outside(PlayerModel player) {
-
+        Player playerCodeInGame = gameManager.getPlayer(player == state.teamA.player ? 0 : 1);
+        gameManager.addTooltip(playerCodeInGame, "off-site!");
     }
 
     @Override
@@ -192,11 +205,57 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
     @Override
     public void defended(PlayerModel player, boolean succeeded) {
+        if (succeeded) {
+            Player p = gameManager.getPlayer(player == state.teamA.player ? 0 : 1);
+            gameManager.addTooltip(p, "Parry!");
+        }
         view.defended(player, succeeded);
     }
 
     @Override
     public void doped(PlayerModel player, ActionType a) {
-        //todo UI
+        view.doped(player, a);
     }
+
+    public void exportAutoDoc() {
+
+        {
+            StringBuilder b = new StringBuilder();
+            b.append("<ul>\n");
+            for (ActionType a : ActionType.values()) {
+                b.append("<li><action>").append(a.name()).append("</action>: ");
+                b.append(" league=").append(a.league + 1);
+                if (a.energy != 0) b.append(" energy=").append(formatDelta(a.energy));
+                if (a.energyTransfer != 0) b.append(" energyTransfer=").append(formatQuantity(a.energyTransfer));
+                if (a.move != 0) b.append(" move=").append(formatDelta(a.move));
+                if (a.distance != 0) b.append(" distance=").append(formatDelta(a.distance));
+                if (a.drug != 0) b.append(" drug=").append(formatDelta(a.drug));
+                b.append("</li>").append("\n");
+            }
+            b.append("</ul>\n");
+            System.out.print(b.toString());
+        }
+        {
+            StringBuilder b = new StringBuilder();
+            b.append("<table>\n");
+            b.append("<tr>\n");
+            b.append("<th>code</th>").append("<th>energy</th>").append("<th>energyTransfer</th>")
+                    .append("<th>energyTransfer</th>").append("<th>move</th>")
+                    .append("<th>distance</th>").append("<th>drug</th>").append("<th>league</th>");
+            for (ActionType a : ActionType.values()) {
+                b.append("<tr>").append("\n");
+                b.append("<td><action>").append(a.name()).append("</action><td>");
+                b.append("<td>").append(formatDelta(a.energy)).append("</td>");
+                b.append("<td>").append(formatQuantity(a.energyTransfer));
+                b.append("<td>").append(formatDelta(a.move));
+                b.append("<td>").append(formatDelta(a.distance));
+                b.append("<td>").append(formatDelta(a.drug));
+                b.append("<td>").append(a.league + 1);
+                b.append("</tr>").append("\n");
+            }
+            b.append("</table>\n");
+            System.out.print(b.toString());
+        }
+    }
+
 }

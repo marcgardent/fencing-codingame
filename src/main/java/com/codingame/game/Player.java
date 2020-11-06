@@ -15,8 +15,7 @@ public class Player extends AbstractMultiplayerPlayer {
         String line = getOutputs().get(0);
         String[] output = line.split(" ");
         if (output.length != 1) throw new InvalidAction("Excepted: '<action>' found: '" + line + "'");
-        int value = Integer.parseInt(output[0]);
-        ActionType ret = ActionType.fromInteger(value);
+        ActionType ret = ActionType.fromString(output[0]);
 
         if (ret == null) throw new InvalidAction("Excepted: '<action>' found: '" + line + "'");
         else if (ret.league > leagueId)
@@ -26,13 +25,23 @@ public class Player extends AbstractMultiplayerPlayer {
 
     public long sendInputs(TeamModel me, TeamModel you) {
 
-        this.sendInputLine(String.format("%d %d %d %d",
+        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d",
                 me.player.getRelativePosition(),
-                me.player.energy, me.score, me.player.posture.code));
+                me.player.energy, me.score,
+                me.player.energyMax, me.player.breakSkill,
+                me.player.walkSkill, me.player.doubleWalkSkill,
+                me.player.retreatSkill, me.player.doubleRetreatSkill,
+                me.player.lungeDistanceSkill, me.player.parryDistanceSkill
+        ));
 
-        this.sendInputLine(String.format("%d %d %d %d",
+        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d",
                 you.player.getRelativeOpponentPosition(),
-                you.player.energy, you.score, you.player.posture.code));
+                you.player.energy, you.score,
+                you.player.energyMax, you.player.breakSkill,
+                you.player.walkSkill, you.player.doubleWalkSkill,
+                you.player.retreatSkill, you.player.doubleRetreatSkill,
+                you.player.lungeDistanceSkill, you.player.parryDistanceSkill
+        ));
 
         long s = System.nanoTime();
         this.execute();

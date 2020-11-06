@@ -31,8 +31,8 @@ public class MatchModel {
         actionB = resolveEnergy(state.teamB, actionB);
         actionA = resolveEnergy(state.teamA, actionA);
 
-        setDoping(state.teamA, actionA);
-        setDoping(state.teamB, actionB);
+        setDrug(state.teamA, actionA);
+        setDrug(state.teamB, actionB);
 
         boolean legalMoveA = applyMove(state.teamA.player, actionA);
         boolean legalMoveB = applyMove(state.teamB.player, actionB);
@@ -61,34 +61,42 @@ public class MatchModel {
         return state;
     }
 
-    private void setDoping(TeamModel team, ActionType a) {
+    private void setDrug(TeamModel team, ActionType a) {
         PlayerModel player = team.player;
 
-        if (a.doping > 0) {
-            if (a == ActionType.DEFENSIVE_RANGE_SKILL) {
-                player.defensiveRangeSkill += a.doping;
-            } else if (a == ActionType.BACKWARD_SKILL) {
-                player.backwardSkill += a.doping;
-            } else if (a == ActionType.DOUBLE_BACKWARD_SKILL) {
-                player.doubleBackwardSkill += a.doping;
-            } else if (a == ActionType.FORWARD_SKILL) {
-                player.forwardSkill += a.doping;
-            } else if (a == ActionType.DOUBLE_FORWARD_SKILL) {
-                player.doubleBackwardSkill += a.doping;
-            } else if (a == ActionType.OFFENSIVE_RANGE_SKILL) {
-                player.offensiveRangeSkill += a.doping;
-            } else if (a == ActionType.ENERGY_MAX_SKILL) {
-                player.energyMax += a.doping;
+        if (a.drug > 0 && player.drugs.size() < PlayerModel.DRUG_MAX) {
+            if (a == ActionType.PARRY_DRUG) {
+                player.parryDistanceSkill += a.drug;
+            } else if (a == ActionType.RETREAT_DRUG) {
+                player.retreatSkill += a.drug;
+            } else if (a == ActionType.DOUBLE_RETREAT_DRUG) {
+                player.doubleRetreatSkill += a.drug;
+            } else if (a == ActionType.WALK_DRUG) {
+                player.walkSkill += a.drug;
+            } else if (a == ActionType.DOUBLE_WALK_DRUG) {
+                player.doubleWalkSkill += a.drug;
+            } else if (a == ActionType.LUNGE_DRUG) {
+                player.lungeDistanceSkill += a.drug;
+            } else if (a == ActionType.ENERGY_MAX_DRUG) {
+                player.energyMax += a.drug;
+            } else if (a == ActionType.BREAK_DRUG) {
+                player.breakSkill += a.drug;
             }
 
-            player.dopings.add(a);
+            player.drugs.add(a);
             observer.doped(player, a);
         }
     }
 
     private void checkTheEnd() {
         boolean timeout = state.tick >= MatchModel.MAX_TICK;
-        if (state.teamA.score >= TeamModel.SCORE_MAX && state.teamA.score - state.teamB.score >= TeamModel.SCORE_GAP) {
+        if (state.teamA.player.energy < 0 && state.teamB.player.energy < 0) {
+            observer.draw();
+        } else if (state.teamA.player.energy < 0) {
+            observer.winTheGame();
+        } else if (state.teamB.player.energy < 0) {
+            observer.winTheGame();
+        } else if (state.teamA.score >= TeamModel.SCORE_MAX && state.teamA.score - state.teamB.score >= TeamModel.SCORE_GAP) {
             observer.winTheGame();
         } else if (state.teamB.score >= TeamModel.SCORE_MAX && state.teamB.score - state.teamA.score >= TeamModel.SCORE_GAP) {
             observer.winTheGame();
@@ -111,17 +119,17 @@ public class MatchModel {
     }
 
     private ActionType resolveEnergy(TeamModel team, ActionType action) {
-        int gain = action.energy;
-        addEnergy(team.player, gain);
+        int delta = action.energy + ((action == ActionType.BREAK) ? team.player.breakSkill : 0);
+        addEnergy(team.player, delta);
 
-        if (team.player.energy <= 0) {
-            team.player.energy = 0;
-            team.messages.add(action.name() + " suppressed because of the KO");
+        if (team.player.energy < 0) {
             observer.playerTired(team.player);
-            return ActionType.SUPPRESSED;
+            //team.player.energy = 0;
+            team.messages.add(action.name() + " suppressed because of the KO");
+            return ActionType.SUPPRESS;
         }
-        if (gain != 0) {
-            team.messages.add("energy " + (gain >= 0 ? "+" : "") + gain);
+        if (delta != 0) {
+            team.messages.add("energy " + (delta >= 0 ? "+" : "") + delta);
         }
 
         return action;
@@ -153,14 +161,13 @@ public class MatchModel {
 
     private boolean isTouched(TeamModel striker, ActionType offensiveAction, TeamModel defender, ActionType defenseAction) {
         int defenseDistance = (state.teamA.player.posture == state.teamB.player.posture && defenseAction.distance < 0)
-                ? defenseAction.distance + defender.player.defensiveRangeSkill : 0;
-        int offensiveDistance = offensiveAction.distance + striker.player.offensiveRangeSkill;
-
+                ? defenseAction.distance + defender.player.parryDistanceSkill : 0;
+        int offensiveDistance = offensiveAction.distance + striker.player.lungeDistanceSkill;
         int defenseLength = defender.player.getRelativePosition() + defenseDistance;
         int offensiveLength = striker.player.getRelativePosition() + offensiveDistance;
 
         if (defenseLength + offensiveLength >= PlayerModel.MAX_POSITION) {
-            if (defenseAction.distance > 0) {
+            if (defenseAction.distance < 0) {
                 defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " failed");
                 observer.defended(defender.player, false);
             }
@@ -169,9 +176,11 @@ public class MatchModel {
 
             return true;
         } else {
-            if (defenseAction.distance > 0) {
+            if (defenseAction.distance < 0) {
                 defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " succeeded");
-                observer.hit(defender.player, true);
+                observer.defended(defender.player, true);
+                addEnergy(defender.player, defenseAction.energyTransfer);
+                addEnergy(striker.player, -defenseAction.energyTransfer);
             }
             striker.messages.add(offensiveAction.name() + "(" + offensiveDistance + ")" + " failed");
             observer.hit(striker.player, false);
@@ -181,7 +190,7 @@ public class MatchModel {
     }
 
     private void setPose(TeamModel team, ActionType action) {
-        if (action == ActionType.BOTTOM_POSTURE || action == ActionType.TOP_POSTURE || action == ActionType.MIDDLE_POSTURE) {
+        if (action == ActionType.LEFT_POSTURE || action == ActionType.RIGHT_POSTURE || action == ActionType.MIDDLE_POSTURE) {
             if (action != team.player.posture) team.messages.add("posture changed:" + action.name());
             else team.messages.add("posture ignored:" + action.name());
             team.player.posture = action;
@@ -207,7 +216,6 @@ public class MatchModel {
         }
         return ret;
     }
-
 
     private void addEnergy(PlayerModel player, int delta) {
         byte total = (byte) Math.min(player.energy + delta, player.energyMax);

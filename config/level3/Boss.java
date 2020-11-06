@@ -5,31 +5,31 @@ import java.util.Scanner;
 
 enum ActionType {
     //League 0
-    SUPPRESSED(Integer.MAX_VALUE, 0, 0, 0, 0, 0),
-    BREAK(0, 2, 0, 0, 0, 0),
-    WALK(0, -1, 20, 0, 0, 0),
-    RETREAT(0, -1, -20, 0, 0, 0),
-    LUNGE(0, -5, 0, 40, 0, 0),
-    PARRY(0, -2, 0, -40, 0, 2),
+    SUPPRESSED(Integer.MAX_VALUE, 0, 0, 0, 0,0),
+    BREAK(0, 2, 0, 0, 0,0),
+    WALK( 0, -1, 20, 0, 0,0),
+    RETREAT( 0, -1, -20, 0, 0,0),
+    LUNGE( 0, -5, 0, 40, 0,0),
+    PARRY( 0, -2, 0, -40, 0,2),
 
     //Boss -> GA algorithm
     //League 1
-    MIDDLE_POSTURE(1, -1, 0, 0, 0, 0),
-    RIGHT_POSTURE(1, -1, 0, 0, 0, 0),
-    LEFT_POSTURE(1, -1, 0, 0, 0, 0),
-    DOUBLE_WALK(1, -4, 40, 0, 0, 0),
-    DOUBLE_RETREAT(1, -4, -30, 0, 0, 0),
+    MIDDLE_POSTURE( 1, -1, 0, 0, 0,0),
+    RIGHT_POSTURE( 1, -1, 0, 0, 0,0),
+    LEFT_POSTURE( 1, -1, 0, 0, 0,0),
+    DOUBLE_WALK( 1, -4, 40, 0, 0,0),
+    DOUBLE_RETREAT( 1, -4, -30, 0, 0,0),
 
     //Boss -> TreeExplore algorithm
     // league 2
-    LUNGE_DRUG(2, -5, 0, 0, 5, 0),
-    PARRY_DRUG(2, -5, 0, 0, 5, 0),
-    ENERGY_MAX_DRUG(2, -5, 0, 0, 5, 0),
-    WALK_DRUG(2, -5, 0, 0, 5, 0),
-    RETREAT_DRUG(2, -5, 0, 0, 5, 0),
-    DOUBLE_WALK_DRUG(2, -5, 0, 0, 10, 0),
-    DOUBLE_RETREAT_DRUG(2, -5, 0, 0, 10, 0),
-    BREAK_DRUG(2, -5, 0, 0, 10, 0);
+    LUNGE_DRUG( 2, -5, 0, 0, 5,0),
+    PARRY_DRUG( 2, -5, 0, 0, 5,0),
+    ENERGY_MAX_DRUG( 2, -5, 0, 0, 5,0),
+    WALK_DRUG( 2, -5, 0, 0, 5,0),
+    RETREAT_DRUG( 2, -5, 0, 0, 5,0),
+    DOUBLE_WALK_DRUG( 2, -5, 0, 0, 10,0),
+    DOUBLE_RETREAT_DRUG(2, -5, 0, 0, 10,0),
+    BREAK_DRUG( 2, -5, 0, 0, 10,0);
 
     public final int league;
     public final int energy;
@@ -190,16 +190,16 @@ class Player {
             if (iCanRetreat && youCanLunge) actions.add(ActionType.PARRY);
             if (iCanLunge) actions.add(ActionType.LUNGE);
 
-            if (iCanForwardDrug) actions.add(ActionType.WALK_DRUG);
-            if (iCanDoubleForwardDrug) actions.add(ActionType.DOUBLE_WALK_DRUG);
-            if (iCanRetreatDrug) actions.add(ActionType.RETREAT_DRUG);
-            if (iCanDoubleRetreatDrug) actions.add(ActionType.DOUBLE_RETREAT_DRUG);
+            if(iCanForwardDrug) actions.add(ActionType.WALK_DRUG);
+            if(iCanDoubleForwardDrug ) actions.add(ActionType.DOUBLE_WALK_DRUG);
+            if(iCanRetreatDrug ) actions.add(ActionType.RETREAT_DRUG);
+            if(iCanDoubleRetreatDrug ) actions.add( ActionType.DOUBLE_RETREAT_DRUG);
 
-            if (iCanLungeDrug) actions.add(ActionType.LUNGE_DRUG);
-            if (iCanParryDrug) actions.add(ActionType.PARRY_DRUG);
+            if(iCanLungeDrug ) actions.add(ActionType.LUNGE_DRUG);
+            if(iCanParryDrug ) actions.add( ActionType.PARRY_DRUG);
 
-            if (iCanEnergyMaxDrug) actions.add(ActionType.ENERGY_MAX_DRUG);
-            if (iCanBreakDrug) actions.add(ActionType.BREAK_DRUG);
+            if( iCanEnergyMaxDrug ) actions.add( ActionType.ENERGY_MAX_DRUG);
+            if( iCanBreakDrug ) actions.add( ActionType.BREAK_DRUG);
 
             ActionType myAction = getRandom(actions.stream().toArray(ActionType[]::new));
             //myAction = myPosture != ActionType.TOP_POSTURE ? ActionType.TOP_POSTURE : myAction;

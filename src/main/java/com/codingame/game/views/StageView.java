@@ -1,13 +1,19 @@
 package com.codingame.game.views;
 
 import com.codingame.game.models.PlayerModel;
+import com.codingame.gameengine.module.entities.Circle;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
 import com.codingame.gameengine.module.entities.Text;
+import com.codingame.gameengine.module.toggle.ToggleModule;
+import com.google.inject.Inject;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class StageView {
+    public static final int LINE = 700;
+    @Inject
+    ToggleModule toggleModule;
 
     public static final int WIDTH = 1920;
     private static final int X_RING = 50;
@@ -15,24 +21,20 @@ public class StageView {
 
     public static final int HALF_WIDTH = 960;
     public static final int HEIGHT = 1080;
-    public static final int LINE = 800;
-
+    @Inject
     private GraphicEntityModule g;
+
     private Text refereeMessage;
 
     private final List<String> messages = new LinkedList<>();
 
-    StageView(GraphicEntityModule g) {
-
-        this.g = g;
-    }
 
     public static int getLogicToWorld(int v) {
         return (int) ((float) v / (float) (PlayerModel.MAX_POSITION - PlayerModel.MIN_POSITION)
                 * (float) StageView.WIDTH_RING) + X_RING;
     }
 
-    public void init() {
+    public StageView init() {
         g.createRectangle()
                 .setWidth(WIDTH).setHeight(HEIGHT)
                 .setX(0).setY(0)
@@ -61,16 +63,25 @@ public class StageView {
                 .setWidth(spanWidth).setHeight(60)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
 
-//        //TODO remove DEBUG
-//        for (int i = 0; i <=500; i+=20) {
-//            g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getLogicToWorld(i)).setY(600);
-//            g.createText(Integer.toString(i)).setX(getLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
-//        }
+        g.createSprite().setImage("logo-square.png").setAnchor(0.5)
+                .setX(HALF_WIDTH).setY(146).setBaseHeight(256).setBaseWidth(256).setAlpha(0.5);
+
+        //TODO remove DEBUG
+        for (int i = 0; i <= 500; i += 20) {
+            Circle c = g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getLogicToWorld(i)).setY(600);
+            Text t = g.createText(Integer.toString(i)).setX(getLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
+            toggleModule.displayOnToggleState(c, "debugInfo", true);
+            toggleModule.displayOnToggleState(t, "debugInfo", true);
+        }
+
 
         refereeMessage = g.createText("GO!").setAnchor(0.5)
                 .setFontWeight(Text.FontWeight.BOLD)
+                .setStrokeColor(Colors.BLACK).setStrokeThickness(8)
                 .setX(HALF_WIDTH).setY(200).setFontSize(100).setFillColor(Colors.WHITE).setAlpha(0.5);
         //.setStrokeColor(Colors.WHITE).setStrokeThickness(20);
+
+        return this;
     }
 
     public void addMessage(String message) {

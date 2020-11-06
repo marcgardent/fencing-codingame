@@ -6,7 +6,6 @@ public class GameModel {
 
     public boolean restart = false;
 
-
     public TeamModel teamA = new TeamModel();
 
     public TeamModel teamB = new TeamModel();

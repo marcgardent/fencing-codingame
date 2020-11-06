@@ -3,48 +3,48 @@ package com.codingame.game.views;
 import com.codingame.game.Player;
 import com.codingame.game.models.ActionType;
 import com.codingame.game.models.PlayerModel;
-import com.codingame.gameengine.module.entities.GraphicEntityModule;
-import com.codingame.gameengine.module.entities.Group;
-import com.codingame.gameengine.module.entities.Rectangle;
-import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.toggle.ToggleModule;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
+import com.google.inject.Inject;
 
 public class PlayerView {
+
+    private static final double PARRY_ANGLE = -Math.PI / 3;
+    @Inject
+    ToggleModule toggleModule;
+    @Inject
+    TooltipModule tooltips;
 
     private static final double BOTTOM_ANGLE = Math.PI / 8;
     private static final double MIDDLE_ANGLE = -Math.PI / 32;
     private static final double TOP_ANGLE = -Math.PI / 8;
-    private static final double BREAK_ANGLE = Math.PI / 3;
+
 
     private static final int ARM_DEFENSIVE_X = -50;
     private static final int ARM_DEFENSIVE_Y = -60;
+    @Inject
+    private GraphicEntityModule g;
     private static final int ARM_WIDTH = 100;
 
     private static final int ARM_OFFENSIVE_X = 0;
     private static final int ARM_OFFENSIVE_Y = -80;
     private static final int FLAG_SIZE = 64;
-
-    private final GraphicEntityModule g;
-    private final PlayerModel playerModel;
+    private PlayerModel playerModel;
     private Group character;
-    private int Color;
+    private int color;
     private Group arm;
     private Sprite attackFlag;
     private Sprite knockoutFlag;
     private Sprite energyFlag;
     private Sprite defenceFlag;
+    private Group bladeGroup;
 
 
-    PlayerView(GraphicEntityModule g, PlayerModel playerModel) {
-        this.g = g;
+    public PlayerView init(PlayerModel playerModel, Player player) {
         this.playerModel = playerModel;
-    }
 
-    public static PlayerView fromPlayer(GraphicEntityModule g, PlayerModel playerModel, Player player) {
-
-        PlayerView ret = new PlayerView(g, playerModel);
-
-
-        ret.Color = player.getColorToken();
+        color = player.getColorToken();
 
         Rectangle body = g.createRectangle()
                 .setWidth(50).setHeight(100)
@@ -68,47 +68,52 @@ public class PlayerView {
                 .setX(0).setY(-10)
                 .setFillColor(Colors.WHITE).setZIndex(10);
 
+
         Rectangle hand = g.createRectangle()
                 .setWidth(20).setHeight(20)
-                .setX(ARM_WIDTH - 20).setY(-10)
+                .setX(-10).setY(-10)
                 .setLineWidth(4).setLineColor(Colors.WHITE)
-                .setFillColor(player.getColorToken()).setZIndex(10);
+                .setFillColor(player.getColorToken()).setZIndex(11);
 
         Rectangle blade = g.createRectangle()
                 .setWidth(range - ARM_WIDTH).setHeight(10)
-                .setX(ARM_WIDTH).setY(-5)
-                .setFillColor(player.getColorToken()).setZIndex(10);
+                .setX(10).setY(-5)
+                .setFillColor(player.getColorToken()).setZIndex(11);
+        Circle c = g.createCircle().setRadius(5).setFillColor(Colors.GREEN);
 
-        ret.attackFlag = g.createSprite().setImage("attack.png").setVisible(false)
+        bladeGroup = g.createGroup(c, hand, blade).setX(ARM_WIDTH - 10).setY(0).setZIndex(11);
+
+        attackFlag = g.createSprite().setImage("attack.png").setVisible(false)
                 .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
-        ret.defenceFlag = g.createSprite().setImage("defence.png").setVisible(false)
+        defenceFlag = g.createSprite().setImage("defence.png").setVisible(false)
                 .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
-        ret.energyFlag = g.createSprite().setImage("energy.png").setVisible(false)
+        energyFlag = g.createSprite().setImage("energy.png").setVisible(false)
                 .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
-        ret.knockoutFlag = g.createSprite().setImage("knockout.png").setVisible(false)
+        knockoutFlag = g.createSprite().setImage("knockout.png").setVisible(false)
                 .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
-//        //TODO DISABLE DEBUG
-//        Line debug = g.createLine().setX(range).setY(0).setX2(range)
-//                .setY2(-100).setZIndex(20).setLineColor(ret.Color).setLineWidth(5);
+        Circle debug = g.createCircle().setX(range).setX(range)
+                .setY(-200).setZIndex(20).setFillColor(color).setRadius(5);
 
-        Group flags = g.createGroup(ret.attackFlag, ret.defenceFlag, ret.energyFlag, ret.knockoutFlag)
+        toggleModule.displayOnToggleState(debug, "debugInfo", true);
+
+        Group flags = g.createGroup(attackFlag, defenceFlag, energyFlag, knockoutFlag)
                 .setX(-25).setY(-220);
 
-        ret.arm = g.createGroup(arm, hand, blade).setX(ARM_DEFENSIVE_X).setY(ARM_DEFENSIVE_Y).setRotation(Math.PI / 4);
+        this.arm = g.createGroup(arm, bladeGroup).setX(ARM_DEFENSIVE_X).setY(ARM_DEFENSIVE_Y).setRotation(Math.PI / 4);
 
-        Group p = g.createGroup(body, flags, head, grid, ret.arm, flags);
+        Group p = g.createGroup(body, flags, head, grid, this.arm, flags, debug);
         if (playerModel.orientation < 0) {
             p.setScaleX(playerModel.orientation);
         }
 
-        ret.character = g.createGroup(p).setY((int) (StageView.LINE));
+        character = g.createGroup(p).setY((int) (StageView.LINE));
 
 
-        return ret;
+        return this;
     }
 
     public void restartPlayer() {
@@ -125,16 +130,37 @@ public class PlayerView {
         {
             //posture
             double angle = MIDDLE_ANGLE;
-            if (playerModel.posture == ActionType.TOP_POSTURE) angle = TOP_ANGLE;
-            else if (playerModel.posture == ActionType.BOTTOM_POSTURE) angle = BOTTOM_ANGLE;
+            if (playerModel.posture == ActionType.RIGHT_POSTURE) angle = TOP_ANGLE;
+            else if (playerModel.posture == ActionType.LEFT_POSTURE) angle = BOTTOM_ANGLE;
             this.arm.setRotation(angle);
             this.arm.setX(ARM_DEFENSIVE_X).setY(ARM_DEFENSIVE_Y);
             g.commitEntityState(0, this.arm);
-
+            bladeGroup.setRotation(0);
+            g.commitEntityState(0, bladeGroup);
         }
 
         this.character.setX(StageView.getLogicToWorld(playerModel.position));
         g.commitEntityState(1, this.character);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("position=").append(playerModel.position)
+                .append("[").append(PlayerModel.MAX_POSITION - playerModel.position).append("]")
+                .append("\n");
+        sb.append("energy=").append(playerModel.energy).append("\n");
+        if (playerModel.energyMax > PlayerModel.ENERGY_MAX_SKILL)
+            sb.append("energyMax=").append(playerModel.energyMax).append("\n");
+        if (playerModel.breakSkill > 0) sb.append("breakSkill=").append(playerModel.breakSkill).append("\n");
+        if (playerModel.lungeDistanceSkill > 0)
+            sb.append("lungeDistanceSkill=").append(playerModel.lungeDistanceSkill).append("\n");
+        if (playerModel.parryDistanceSkill > 0)
+            sb.append("parryDistanceSkill=").append(playerModel.parryDistanceSkill).append("\n");
+        if (playerModel.walkSkill > 0) sb.append("walkSkill=").append(playerModel.walkSkill).append("\n");
+        if (playerModel.doubleWalkSkill > 0)
+            sb.append("doubleWalkSkill=").append(playerModel.doubleWalkSkill).append("\n");
+        if (playerModel.retreatSkill > 0) sb.append("retreatSkill=").append(playerModel.retreatSkill).append("\n");
+        if (playerModel.doubleRetreatSkill > 0)
+            sb.append("doubleRetreatSkill=").append(playerModel.doubleRetreatSkill).append("\n");
+        tooltips.setTooltipText(character, sb.toString());
     }
 
     public void playerKo() {
@@ -159,7 +185,11 @@ public class PlayerView {
 
     public void defended(boolean succeeded) {
         this.defenceFlag.setVisible(true).setAlpha(succeeded ? 1 : 0.5);
-        ;
         g.commitEntityState(0.00001, defenceFlag);
+
+        bladeGroup.setRotation(PARRY_ANGLE);
+        arm.setRotation(TOP_ANGLE);
+        g.commitEntityState(0.00001, arm);
+        g.commitEntityState(0.00001, bladeGroup);
     }
 }

@@ -16,23 +16,28 @@ public class PlayerModel {
     //Energy
     public static final int ENERGY_MAX_SKILL = 20;
     public static final int ENERGY_START = 20;
+    public static final int DRUG_MAX = 7;
 
     public int position;
     public int orientation;
     public int energy = ENERGY_START;
+
     public int energyMax = ENERGY_MAX_SKILL;
+    public int breakSkill = 0;
 
-    public int doubleForwardSkill = 0;
-    public int doubleBackwardSkill = 0;
-    public int forwardSkill = 0;
-    public int backwardSkill = 0;
+    public int doubleWalkSkill = 0;
+    public int doubleRetreatSkill = 0;
 
-    public int offensiveRangeSkill = 0;
-    public int defensiveRangeSkill = 0;
+    public int walkSkill = 0;
+    public int retreatSkill = 0;
+
+    public int lungeDistanceSkill = 0;
+    public int parryDistanceSkill = 0;
+
     public ActionType posture;
     public boolean touched = false;
 
-    public ArrayList<ActionType> dopings = new ArrayList<ActionType>();
+    public ArrayList<ActionType> drugs = new ArrayList<ActionType>();
 
     public int getRelativePosition() {
         if (orientation < 0) return MAX_POSITION - position;
@@ -46,10 +51,10 @@ public class PlayerModel {
 
     public int getMove(ActionType move) {
         int gain = 0;
-        if (move == ActionType.RETREAT) return move.move + backwardSkill + gain;
-        if (move == ActionType.WALK) return move.move + forwardSkill + gain;
-        if (move == ActionType.DOUBLE_BACKWARD_MOVE) return move.move + doubleBackwardSkill + gain;
-        if (move == ActionType.DOUBLE_FORWARD_MOVE) return move.move + doubleForwardSkill + gain;
+        if (move == ActionType.RETREAT) return move.move + retreatSkill + gain;
+        if (move == ActionType.WALK) return move.move + walkSkill + gain;
+        if (move == ActionType.DOUBLE_RETREAT) return move.move + doubleRetreatSkill + gain;
+        if (move == ActionType.DOUBLE_WALK) return move.move + doubleWalkSkill + gain;
         else return move.move + gain;
     }
 

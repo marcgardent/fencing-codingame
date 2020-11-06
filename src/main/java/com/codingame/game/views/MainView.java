@@ -1,6 +1,7 @@
 package com.codingame.game.views;
 
 import com.codingame.game.Player;
+import com.codingame.game.models.ActionType;
 import com.codingame.game.models.GameModel;
 import com.codingame.game.models.PlayerModel;
 import com.codingame.game.models.TeamModel;
@@ -17,26 +18,29 @@ public class MainView {
     private final Map<TeamModel, TeamView> viewByTeam = new HashMap<>();
     @Inject
     private GraphicEntityModule g;
+    @Inject
     private TeamView aView;
+    @Inject
     private TeamView bView;
+    @Inject
     private StageView stage;
     private boolean restarted = true;
     private GameModel model;
 
     public void init(GameModel model, Player playerA, Player playerB) {
         this.model = model;
-        stage = new StageView(g);
         stage.init();
-
-        aView = TeamView.fromPlayer(g, model.teamA, playerA)
+        aView.init(model.teamA, playerA)
                 .addScoreUI(StageView.HALF_WIDTH - 110, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH - (TeamView.ENERGY_BAR_SIZE + 20), StageView.LINE - 290)
-                .setPlayerBlock(0, StageView.LINE + 60);
+                .setPlayerBlock(0, StageView.LINE + 60)
+                .addDrugSlot(StageView.HALF_WIDTH - 10, StageView.LINE + 60 + 130, -1);
 
-        bView = TeamView.fromPlayer(g, model.teamB, playerB)
+        bView.init(model.teamB, playerB)
                 .addScoreUI(StageView.HALF_WIDTH + 10, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH + 10, StageView.LINE - 290)
-                .setPlayerBlock(StageView.HALF_WIDTH, StageView.LINE + 60);
+                .setPlayerBlock(StageView.HALF_WIDTH, StageView.LINE + 60)
+                .addDrugSlot(StageView.HALF_WIDTH + 10, StageView.LINE + 60 + 130, 1);
 
         viewByTeam.put(model.teamA, aView);
         viewByTeam.put(model.teamB, bView);
@@ -93,5 +97,9 @@ public class MainView {
 
     public void defended(PlayerModel player, boolean succeeded) {
         viewByPlayer.get(player).playerView.defended(succeeded);
+    }
+
+    public void doped(PlayerModel player, ActionType a) {
+        viewByPlayer.get(player).doped(a);
     }
 }
