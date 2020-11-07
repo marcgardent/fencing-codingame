@@ -64,7 +64,7 @@ public class MatchModel {
     private void setDrug(TeamModel team, ActionType a) {
         PlayerModel player = team.player;
 
-        if (a.drug > 0 && player.drugs.size() < PlayerModel.DRUG_MAX) {
+        if (a.drug > 0 && player.drugs.size() <= PlayerModel.DRUG_MAX) {
             if (a == ActionType.PARRY_DRUG) {
                 player.parryDistanceSkill += a.drug;
             } else if (a == ActionType.RETREAT_DRUG) {

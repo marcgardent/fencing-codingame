@@ -25,18 +25,18 @@ public class Player extends AbstractMultiplayerPlayer {
 
     public long sendInputs(TeamModel me, TeamModel you) {
 
-        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d",
+        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d %d",
                 me.player.getRelativePosition(),
-                me.player.energy, me.score,
+                me.player.energy, me.score, me.player.getDrugCount(),
                 me.player.energyMax, me.player.breakSkill,
                 me.player.walkSkill, me.player.doubleWalkSkill,
                 me.player.retreatSkill, me.player.doubleRetreatSkill,
                 me.player.lungeDistanceSkill, me.player.parryDistanceSkill
         ));
 
-        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d",
+        this.sendInputLine(String.format("%d %d %d %d %d %d %d %d %d %d %d %d",
                 you.player.getRelativeOpponentPosition(),
-                you.player.energy, you.score,
+                you.player.energy, you.score, you.player.getDrugCount(),
                 you.player.energyMax, you.player.breakSkill,
                 you.player.walkSkill, you.player.doubleWalkSkill,
                 you.player.retreatSkill, you.player.doubleRetreatSkill,

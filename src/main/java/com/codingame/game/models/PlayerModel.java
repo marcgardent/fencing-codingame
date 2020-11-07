@@ -39,6 +39,12 @@ public class PlayerModel {
 
     public ArrayList<ActionType> drugs = new ArrayList<ActionType>();
 
+    public int getDrugCount() {
+        return drugs.size();
+    }
+
+    ;
+
     public int getRelativePosition() {
         if (orientation < 0) return MAX_POSITION - position;
         else return position;

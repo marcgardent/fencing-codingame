@@ -35,13 +35,12 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
     @Override
     public void init() {
-        exportAutoDoc();
+        //exportAutoDoc();
 
         random = new Random(gameManager.getSeed());
         leagueId = gameManager.getLeagueLevel() - 1;
         match = new MatchModel(this);
         state = match.getState();
-
 
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
@@ -54,7 +53,7 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
     @Override
     public void gameTurn(int turn) {
-
+        gameManager.addToGameSummary("frame:" + state.tick);
         if (state.restart) {
             state = match.restart();
             view.restart();
@@ -225,11 +224,12 @@ public class Referee extends AbstractReferee implements MatchObserver {
             for (ActionType a : ActionType.values()) {
                 b.append("<li><action>").append(a.name()).append("</action>: ");
                 b.append(" league=").append(a.league + 1);
-                if (a.energy != 0) b.append(" energy=").append(formatDelta(a.energy));
-                if (a.energyTransfer != 0) b.append(" energyTransfer=").append(formatQuantity(a.energyTransfer));
-                if (a.move != 0) b.append(" move=").append(formatDelta(a.move));
-                if (a.distance != 0) b.append(" distance=").append(formatDelta(a.distance));
-                if (a.drug != 0) b.append(" drug=").append(formatDelta(a.drug));
+                if (a.energy != 0) b.append(" energy=<const>").append(formatDelta(a.energy)).append("</const>");
+                if (a.energyTransfer != 0) b.append(" energyTransfer=<const>")
+                        .append(formatQuantity(a.energyTransfer)).append("</const>");
+                if (a.move != 0) b.append(" move=<const>").append(formatDelta(a.move)).append("</const>");
+                if (a.distance != 0) b.append(" distance=<const>").append(formatDelta(a.distance)).append("</const>");
+                if (a.drug != 0) b.append(" drug=<const>").append(formatDelta(a.drug)).append("</const>");
                 b.append("</li>").append("\n");
             }
             b.append("</ul>\n");
@@ -240,17 +240,18 @@ public class Referee extends AbstractReferee implements MatchObserver {
             b.append("<table>\n");
             b.append("<tr>\n");
             b.append("<th>code</th>").append("<th>energy</th>").append("<th>energyTransfer</th>")
-                    .append("<th>energyTransfer</th>").append("<th>move</th>")
+                    .append("<th>move</th>")
                     .append("<th>distance</th>").append("<th>drug</th>").append("<th>league</th>");
+            b.append("</tr>").append("\n");
             for (ActionType a : ActionType.values()) {
                 b.append("<tr>").append("\n");
-                b.append("<td><action>").append(a.name()).append("</action><td>");
-                b.append("<td>").append(formatDelta(a.energy)).append("</td>");
-                b.append("<td>").append(formatQuantity(a.energyTransfer));
-                b.append("<td>").append(formatDelta(a.move));
-                b.append("<td>").append(formatDelta(a.distance));
-                b.append("<td>").append(formatDelta(a.drug));
-                b.append("<td>").append(a.league + 1);
+                b.append("<td><action>").append(a.name()).append("</action></td>");
+                b.append("<td><const>").append(formatDelta(a.energy)).append("</const></td>");
+                b.append("<td><const>").append(formatQuantity(a.energyTransfer)).append("</td>");
+                b.append("<td><const>").append(formatDelta(a.move)).append("</const></td>");
+                b.append("<td><const>").append(formatDelta(a.distance)).append("</const></td>");
+                b.append("<td><const>").append(formatDelta(a.drug)).append("</const></td>");
+                b.append("<td>").append(a.league + 1).append("</td>");
                 b.append("</tr>").append("\n");
             }
             b.append("</table>\n");

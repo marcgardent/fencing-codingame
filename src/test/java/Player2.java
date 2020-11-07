@@ -35,6 +35,7 @@ public class Player2 {
             int myPosition = in.nextInt();
             int myEnergy = in.nextInt();
             int myScore = in.nextInt();
+            int myDrugCount = in.nextInt();
             int myEnergyMax = in.nextInt();
             int myBreakSkill = in.nextInt();
             int myForwardSkill = in.nextInt();
@@ -50,6 +51,7 @@ public class Player2 {
             int yourPosition = in.nextInt();
             int yourEnergy = in.nextInt();
             int yourScore = in.nextInt();
+            int yourDrugCount = in.nextInt();
             int yourEnergyMax = in.nextInt();
             int yourBreakSkill = in.nextInt();
             int yourForwardSkill = in.nextInt();

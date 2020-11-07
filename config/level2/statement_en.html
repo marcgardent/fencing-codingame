@@ -1,23 +1,23 @@
-<html>
-    <head>
-        <link href="codeingame-mock.css" rel="stylesheet">
-    </head>
-    <body style="font-family:Open Sans,Lato,sans-serif!important">
-        <div class="statement-body">
-            <!-- GOAL -->
-            <div class="statement-section statement-goal">
-                <h2>
-                    <span class="icon icon-goal">&nbsp;</span>
-                    <span>The Goal</span>
-                </h2>
-                <img class="statement-goal-content">
-                <p>
+<!--<html>-->
+<!--    <head>-->
+<!--        <link href="codeingame-mock.css" rel="stylesheet">-->
+<!--    </head>-->
+<!--    <body style="font-family:Open Sans,Lato,sans-serif!important">-->
+<div class="statement-body">
+    <!-- GOAL -->
+    <div class="statement-section statement-goal">
+        <h2>
+            <span class="icon icon-goal">&nbsp;</span>
+            <span>The Goal</span>
+        </h2>
+        <img class="statement-goal-content">
+        <p>
             Hit your opponent and manage our energy to score 20 points!
         </p>
             </div>
 
             <div style="color:#7cc576;background-color:rgba(124,197 , 118 , 0.1 );padding:1em;padding-left:6em;font-size:1.5em">
-                <p>⚠️ new rules in the green sections.</p>
+                <p>new rules in the green sections.</p>
             </div>
             <div class="statement-victory-conditions">
                 <div class="icon victory"></div>
@@ -311,17 +311,243 @@
                             </li>
                             <li>
                                 <action>DOUBLE_RETREAT</action>
-                        : energy=
-                        <const>-4</const>
-                        move=
-                        <const>-30</const>
+                                : energy=
+                                <const>-4</const>
+                                move=
+                                <const>-30</const>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
+    <div class="statement-section statement-rules">
+        <h2><span class="icon icon-rules">&nbsp;</span><span>Raw Data</span></h2>
+        <table class="marked">
+            <tr>
+                <th>code</th>
+                <th>energy</th>
+                <th>energy transfer</th>
+                <th>move</th>
+                <th>distance</th>
+                <th>drug(League3)</th>
+                <th>league</th>
+            </tr>
+            <tr>
+                <td>
+                    <action>BREAK</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>+2</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>WALK</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-1</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>+20</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>RETREAT</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-1</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>-20</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>LUNGE</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-5</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>+40</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>PARRY</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-2</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>2</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>-40</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>DOUBLE_WALK</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-4</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>+40</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>
+                    <action>DOUBLE_RETREAT</action>
+                </td>
+                <td>
+                    <const>
+                        <constant>-4</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                </td>
+                <td>
+                    <const>
+                        <constant>-30</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>
+                    <const>
+                        <constant>0</constant>
+                    </const>
+                </td>
+                <td>2</td>
+            </tr>
+        </table>
+        <h2>Call to action!</h2>
+        <p>Give your feedback and vote to encourage the author! Enjoy your games!</p>
     </div>
+</div>
 
-</body>
-</html>
+<!--</body>-->
+<!--</html>-->
