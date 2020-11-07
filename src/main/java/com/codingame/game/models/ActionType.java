@@ -23,7 +23,7 @@ public enum ActionType {
     //Boss -> TreeExplore algorithm
     // league 2
     LUNGE_DRUG(2, -5, 0, 0, 5, 0),
-    PARRY_DRUG(2, -5, 0, 0, 5, 0),
+    PARRY_DRUG(2, -5, 0, 0, -5, 0),
     ENERGY_MAX_DRUG(2, -5, 0, 0, 5, 0),
     WALK_DRUG(2, -5, 0, 0, 5, 0),
     RETREAT_DRUG(2, -5, 0, 0, 5, 0),
