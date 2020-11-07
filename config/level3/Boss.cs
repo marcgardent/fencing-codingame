@@ -2725,11 +2725,11 @@ namespace Fencing.Models
 }
 
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Fencing.Models
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class PlayerModel
     {
