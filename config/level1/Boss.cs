@@ -2151,7 +2151,7 @@ public class ActionType
     //Boss -> TreeExplore algorithm
     // league 2
     public static ActionType LUNGE_DRUG = Action("LUNGE_DRUG", 2, -5, 0, 0, 5);
-    public static ActionType PARRY_DRUG = Action("PARRY_DRUG", 2, -5, 0, 0, 5);
+    public static ActionType PARRY_DRUG = Action("PARRY_DRUG", 2, -5, 0, 0, -5);
     public static ActionType ENERGY_MAX_DRUG = Action("ENERGY_MAX_DRUG", 2, -5, 0, 0, 5);
     public static ActionType WALK_DRUG = Action("WALK_DRUG", 2, -5, 0, 0, 5);
     public static ActionType RETREAT_DRUG = Action("RETREAT_DRUG", 2, -5, 0, 0, 5);

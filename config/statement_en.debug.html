@@ -15,10 +15,6 @@
             Hit your opponent and manage our energy to score 20 points!
         </p>
             </div>
-
-            <div style="color:#7cc576;background-color:rgba(124,197 , 118 , 0.1 );padding:1em;padding-left:6em;font-size:1.5em">
-                <p>⚠️ new rules in the green sections.</p>
-            </div>
             <div class="statement-victory-conditions">
                 <div class="icon victory"></div>
                 <div class="blk">
@@ -27,7 +23,7 @@
                         <ul style="padding-bottom:0">
                             <li>Score more points than your opponent(s) at games end.</li>
                             <li>Decisive victory when you score 20 points at least 2 points apart.</li>
-                            <li>The final result for your ranking equals <var>my.score</var> - <var>opponent.score</var>.</li>
+                            <li>The final result for your ranking equals <var>myScore</var> - <var>YourScore</var>.</li>
                         </ul>
                     </div>
                 </div>
@@ -39,11 +35,11 @@
                     <div class="text">
                         <ul style="padding-bottom:0">
                             <li>Score fewer points than your opponent(s) at games end.</li>
-                            <li>In some cases you receive a ranking penalty (-20)</li>
+                            <li>In some cases you received a ranking penalty (-20)</li>
                             <ul>
                                 <li>forfeit: when you run out of energy.</li>
-                                <li>non-combativity: when you and the opponent don't score any point at games end (200 frames).</li>
-                                <li>issue: you do not respond in due time (50ms) or output an invalid command.</li>
+                                <li>non-combativity: when you and your opponent don't score any point.</li>
+                                <li>bug: You do not respond in due time or output an invalid command.</li>
                             </ul>
                     </ul>
                 </div>
@@ -112,66 +108,64 @@
                         <const>-30</const>
                         </li>
                     </ul>
-                    <div style="color:#7cc576;background-color:rgba(124,197,118,0.1);">
-                        <ul>
-                            <li>
-                                <action>LUNGE_DRUG</action>
+                    <ul>
+                        <li>
+                            <action>LUNGE_DRUG</action>
                         : energy=
                         <const>-5</const>
                         LungeSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>PARRY_DRUG</action>
+                        </li>
+                        <li>
+                            <action>PARRY_DRUG</action>
                         : energy=
                         <const>-5</const>
                         ParrySkill=
                         <const>-5</const>
-                            </li>
-                            <li>
-                                <action>ENERGY_MAX_DRUG</action>
+                        </li>
+                        <li>
+                            <action>ENERGY_MAX_DRUG</action>
                         : energy=
                         <const>-5</const>
                         EnergyMax=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>WALK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>WALK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         WalkSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>RETREAT_DRUG</action>
+                        </li>
+                        <li>
+                            <action>RETREAT_DRUG</action>
                         : energy=
                         <const>-5</const>
                         RetreatSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>DOUBLE_WALK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>DOUBLE_WALK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         DoubleWalkSkill=
                         <const>+10</const>
-                            </li>
-                            <li>
-                                <action>DOUBLE_RETREAT_DRUG</action>
+                        </li>
+                        <li>
+                            <action>DOUBLE_RETREAT_DRUG</action>
                         : energy=
                         <const>-5</const>
                         DoubleRetreatSkill=
                         <const>+10</const>
-                            </li>
-                            <li>
-                                <action>BREAK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>BREAK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         BreakSkill=
                         <const>+10</const>
-                            </li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
                     <p>let me explain the behavior of each property:</p>
                     <ul>
                         <li>energy: consume and produce in the range [
@@ -191,30 +185,24 @@
                         <li>distance: positive is an attack; negative is a defense; see §Assault.</li>
                         <li>energyTransfer: transfer the quantity from your opponent to you.</li>
                     </ul>
-                    <div style="color:#7cc576;background-color:rgba(124,197,118,0.1);">
-                        <ul>
-                            <li>EnergyMax: increase the energy gauge!</li>
-                            <li>BreakSkill: increase your recovery; added to break's energy .</li>
-                            <li>LungeSkill: added to the lunge's distance.</li>
-                            <li>ParrySkill: added to the parry's distance.</li>
-                            <li>WalkSkill: added to walk's move.</li>
-                            <li>RetreatSkill: added to retreat's move.</li>
-                            <li>DoubleWalkSkill: added to double walk's move.</li>
-                            <li>DoubleRetreatSkill: added to double retreat's move.</li>
-                        </ul>
-                    </div>
+                    <ul>
+                        <li>EnergyMax: increase the energy gauge!</li>
+                        <li>BreakSkill: increase your recovery; added to break's energy .</li>
+                        <li>LungeSkill: added to the lunge's distance.</li>
+                        <li>ParrySkill: added to the parry's distance.</li>
+                        <li>WalkSkill: added to walk's move.</li>
+                        <li>RetreatSkill: added to retreat's move.</li>
+                        <li>DoubleWalkSkill: added to double walk's move.</li>
+                        <li>DoubleRetreatSkill: added to double retreat's move.</li>
+                    </ul>
                     <h3>Resolutions</h3>
-
+                    
                     <ul>
                         <li>the action's energy is consumed or produced in any cases</li>
                         <li>You declare forfeit when you run out of energy.</li>
                         <li>The players respawn when:
                             <ul>
                                 <li>they collide (<var>myPosition</var> > <var>yourPosition</var>)        
-                                
-                                
-                                
-                                
                                 <li>an assault is succeeded.</li>
                                 <li>a player is outside.</li>
                             </ul>
@@ -238,10 +226,6 @@
                         <p>isTouchedWhenLunge(strikerPosition:int, defenderPosition:int) -> (defender) + (striker +
                         LungeDistance) >= 500;</p>
                     </div>
-                    
-                    <div style="color:#7cc576;background-color:rgba(124,197 , 118 , 0.1 );padding:1em;padding-left:6em">
-                        <p>⚠️ don't forget! change the formula to add lungeDistanceSkill and parryDistanceSkill.</p>
-                    </div>
 
                     <p>to use it, Normalize the position of your opponent, two sample bellow:</p>
                     <div style='background-color:#444;font-family:monospace;padding:1em'>
@@ -249,7 +233,6 @@
                         <p>IAttackOpponentDefend = isTouchedWhenAttackDefense(my.Position, opponentPositionNormalized)</p>
                         <p>opponentAttack = isTouchedWhenAttack(opponentPositionNormalized, my.position)</p>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -298,6 +281,26 @@
                         [, init
                         <const>0</const>
                         </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <var>drugCount</var>: not used until league 3</li>
+                        <li>
+                            <var>energyMax</var>: not used until league 3</li>
+                        <li>
+                            <var>breakSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>walkSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>doubleWalkSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>retreatSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>doubleRetreatSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>lungeDistanceSkill</var>: not used until league 3</li>
+                        <li>
+                            <var>parryDistanceSkill</var>: not used until league 3</li>
                     </ul>
                     <ul>
                         <li>
@@ -392,66 +395,64 @@
                         <const>-30</const>
                         </li>
                     </ul>
-                    <div style="color:#7cc576;background-color:rgba(124,197,118,0.1);">
-                        <ul>
-                            <li>
-                                <action>LUNGE_DRUG</action>
+                    <ul>
+                        <li>
+                            <action>LUNGE_DRUG</action>
                         : energy=
                         <const>-5</const>
                         LungeSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>PARRY_DRUG</action>
+                        </li>
+                        <li>
+                            <action>PARRY_DRUG</action>
                         : energy=
                         <const>-5</const>
                         ParrySkill=
                         <const>-5</const>
-                            </li>
-                            <li>
-                                <action>ENERGY_MAX_DRUG</action>
+                        </li>
+                        <li>
+                            <action>ENERGY_MAX_DRUG</action>
                         : energy=
                         <const>-5</const>
                         EnergyMax=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>WALK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>WALK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         WalkSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>RETREAT_DRUG</action>
+                        </li>
+                        <li>
+                            <action>RETREAT_DRUG</action>
                         : energy=
                         <const>-5</const>
                         RetreatSkill=
                         <const>+5</const>
-                            </li>
-                            <li>
-                                <action>DOUBLE_WALK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>DOUBLE_WALK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         DoubleWalkSkill=
                         <const>+10</const>
-                            </li>
-                            <li>
-                                <action>DOUBLE_RETREAT_DRUG</action>
+                        </li>
+                        <li>
+                            <action>DOUBLE_RETREAT_DRUG</action>
                         : energy=
                         <const>-5</const>
                         DoubleRetreatSkill=
                         <const>+10</const>
-                            </li>
-                            <li>
-                                <action>BREAK_DRUG</action>
+                        </li>
+                        <li>
+                            <action>BREAK_DRUG</action>
                         : energy=
                         <const>-5</const>
                         BreakSkill=
                         <const>+10</const>
-                            </li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

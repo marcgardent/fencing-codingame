@@ -1,21 +1,26 @@
 gameloop
-read myPosition:int myEnergy:int myScore:int myPosture:int
-read yourPosition:int yourEnergy:int yourScore:int yourPosture:int
-write 1
+loop 2 read position:int energy:int score:int drugCount:int energyMax:int breakSkill:int walkSkill:int doubleWalkSkill:int retreatSkill:int doubleRetreatSkill:int lungeDistanceSkill:int parryDistanceSkill:int
+write BREAK
 
 STATEMENT
 Score 20 points!
+0-Index is your data
+1-Index is opponent data
+choose one action by turn BREAK WALK RETREAT LUNGE PARRY
 
 INPUT
-myPosition: range [0,500], step 50, init 200|300
-myEnergy: range [0,20] init 20
-myEnergy: range [0,20] init 20
-myScore: range [0,20] init 0
-myPosture: middle 6, top 7 bottom 8
-yourPosition: range [0,500], step 50, init 200|300
-yourEnergy: range [0,20] init 20
-yourScore: range [0,20] init 0
-yourPosture: middle 6, top 7 bottom 8
+position: range [0,500], step 50, init(you:200, opponent:300)
+energy: range [0,20] init 20
+score: range [0,20] init 0
+drugCount: not used until league 3
+energyMax: not used until league 3
+breakSkill: not used until league 3
+walkSkill: not used until league 3
+doubleWalkSkill: not used until league 3
+retreatSkill: not used until league 3
+doubleRetreatSkill: not used until league 3
+lungeDistanceSkill: not used until league 3
+parryDistanceSkill: not used until league 3
 
 OUTPUT
 <action>
