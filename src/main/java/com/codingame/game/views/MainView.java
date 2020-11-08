@@ -46,6 +46,8 @@ public class MainView {
         viewByTeam.put(model.teamB, bView);
         viewByPlayer.put(model.teamA.player, aView);
         viewByPlayer.put(model.teamB.player, bView);
+
+
         tick();
     }
 
