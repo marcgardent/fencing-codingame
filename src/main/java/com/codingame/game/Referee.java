@@ -36,7 +36,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
     @Override
     public void init() {
         //exportAutoDoc();
-
         random = new Random(gameManager.getSeed());
         leagueId = gameManager.getLeagueLevel() - 1;
         match = new MatchModel(this);
@@ -89,19 +88,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
                 String msgA = String.join(", ", state.teamA.messages);
                 String msgB = String.join(", ", state.teamB.messages);
 
-//                gameManager.addToGameSummary(String.format("%s:%n", playerA.getNicknameToken()));
-//                System.out.printf("%s:%n", playerA.getNicknameToken());
-//                for (String msg : state.teamA.messages) {
-//                    gameManager.addToGameSummary(String.format("%s%n", msg));
-//                    System.out.printf("%s%n", msg);
-//                }
-//
-//                gameManager.addToGameSummary(String.format("%s:%n", playerB.getNicknameToken()));
-//                System.out.printf("%s:%n", playerB.getNicknameToken());
-//                for (String msg : state.teamB.messages) {
-//                    gameManager.addToGameSummary(String.format("%s%n", msg));
-//                    System.out.printf("%s%n", msg);
-//                }
             }
         }
     }
@@ -131,13 +117,22 @@ public class Referee extends AbstractReferee implements MatchObserver {
     }
 
     private void setScore() {
+
+        //TODO UNIT TEST
+
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
-        boolean nonCombativityPenality = state.teamA.score == 0 && state.teamB.score == 0;
-        boolean penalityA = playerA.isActive() && state.teamA.player.energy >= 0 && !nonCombativityPenality;
-        boolean penalityB = playerA.isActive() && state.teamB.player.energy >= 0 && !nonCombativityPenality;
-        playerA.setScore(penalityA ? (state.teamA.score - state.teamB.score) : -20);
-        playerB.setScore(penalityB ? (state.teamB.score - state.teamA.score) : -20);
+
+        boolean nonCombativityPenality =
+                playerB.isActive() && playerA.isActive() &&
+                        state.teamA.score == 0 && state.teamB.score == 0 &&
+                        state.teamA.player.energy >= 0 && state.teamB.player.energy >= 0;
+
+        boolean penalityA = nonCombativityPenality || !playerA.isActive() || state.teamA.player.energy < 0;
+        boolean penalityB = nonCombativityPenality || !playerB.isActive() || state.teamA.player.energy < 0;
+
+        playerA.setScore(!penalityA ? (state.teamA.score - state.teamB.score) : -20);
+        playerB.setScore(!penalityB ? (state.teamB.score - state.teamA.score) : -20);
 
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(
                 "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
@@ -195,7 +190,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
     @Override
     public void hit(PlayerModel player, boolean succeeded) {
         view.hit(player, succeeded);
-
         if (succeeded) {
             Player playerCodeInGame = gameManager.getPlayer(player == state.teamA.player ? 0 : 1);
             gameManager.addTooltip(playerCodeInGame, "touché!");

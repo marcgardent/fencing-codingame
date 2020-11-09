@@ -43,8 +43,6 @@ public class PlayerModel {
         return drugs.size();
     }
 
-    ;
-
     public int getRelativePosition() {
         if (orientation < 0) return MAX_POSITION - position;
         else return position;
@@ -56,12 +54,12 @@ public class PlayerModel {
     }
 
     public int getMove(ActionType move) {
-        int gain = 0;
-        if (move == ActionType.RETREAT) return move.move + retreatSkill + gain;
-        if (move == ActionType.WALK) return move.move + walkSkill + gain;
-        if (move == ActionType.DOUBLE_RETREAT) return move.move + doubleRetreatSkill + gain;
-        if (move == ActionType.DOUBLE_WALK) return move.move + doubleWalkSkill + gain;
-        else return move.move + gain;
+
+        if (move == ActionType.RETREAT) return move.move + retreatSkill;
+        if (move == ActionType.WALK) return move.move + walkSkill;
+        if (move == ActionType.DOUBLE_RETREAT) return move.move + doubleRetreatSkill;
+        if (move == ActionType.DOUBLE_WALK) return move.move + doubleWalkSkill;
+        else return move.move;
     }
 
     public void reset() {

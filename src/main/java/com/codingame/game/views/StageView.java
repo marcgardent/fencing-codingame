@@ -74,7 +74,6 @@ public class StageView {
             toggleModule.displayOnToggleState(t, "debugInfo", true);
         }
 
-
         refereeMessage = g.createText("GO!").setAnchor(0.5)
                 .setFontWeight(Text.FontWeight.BOLD)
                 .setStrokeColor(Colors.BLACK).setStrokeThickness(8)

@@ -1,6 +1,5 @@
 package com.codingame.game.models;
 
-
 public class MatchModel {
     public static final int MAX_TICK = 400;
 
@@ -210,7 +209,7 @@ public class MatchModel {
                 p = Math.max(p, PlayerModel.MIN_POSITION);
                 p = Math.min(p, PlayerModel.MAX_POSITION);
 
-                observer.move(player, p, player.position);
+                observer.move(player, player.position, p);
                 player.position = p;
             }
         }

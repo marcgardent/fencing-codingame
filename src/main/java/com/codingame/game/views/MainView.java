@@ -76,7 +76,7 @@ public class MainView {
     }
 
     public void move(PlayerModel player, int from, int to) {
-
+        viewByPlayer.get(player).playerView.move(from, to);
     }
 
     public void hit(PlayerModel player, boolean succeeded) {

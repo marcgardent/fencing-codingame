@@ -97,6 +97,7 @@ public class TeamView {
                 .setBaseWidth(256).setBaseHeight(356).setY(0).setScale((double) CARD_SIZE / (double) 256);
         drugSlots.add(s);
         drugIndex += 1;
+        playerView.animation.toBreak();
     }
 
     public TeamView addEnergyBarUI(int x, int y) {
