@@ -28,11 +28,15 @@ public class StageView {
 
     private final List<String> messages = new LinkedList<>();
 
-
-    public static int getLogicToWorld(int v) {
+    public static int getDistanceLogicToWorld(int v) {
         return (int) ((float) v / (float) (PlayerModel.MAX_POSITION - PlayerModel.MIN_POSITION)
-                * (float) StageView.WIDTH_RING) + X_RING;
+                * (float) StageView.WIDTH_RING);
     }
+
+    public static int getPositionLogicToWorld(int v) {
+        return getDistanceLogicToWorld(v) + X_RING;
+    }
+
 
     public StageView init() {
         g.createRectangle()
@@ -57,9 +61,9 @@ public class StageView {
                 .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
         //spawn line
-        int spanWidth = getLogicToWorld(PlayerModel.SPAWN_POSITION_B) - getLogicToWorld(PlayerModel.SPAWN_POSITION_A);
+        int spanWidth = getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_B) - getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_A);
         g.createRectangle()
-                .setX(StageView.getLogicToWorld(PlayerModel.SPAWN_POSITION_A)).setY(LINE - 30).setFillAlpha(0)
+                .setX(StageView.getPositionLogicToWorld(PlayerModel.SPAWN_POSITION_A)).setY(LINE - 30).setFillAlpha(0)
                 .setWidth(spanWidth).setHeight(60)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
 
@@ -68,10 +72,10 @@ public class StageView {
 
         //TODO remove DEBUG
         for (int i = 0; i <= 500; i += 20) {
-            Circle c = g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getLogicToWorld(i)).setY(600);
-            Text t = g.createText(Integer.toString(i)).setX(getLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
+            Circle c = g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getPositionLogicToWorld(i)).setY(600);
+            //Text t = g.createText(Integer.toString(i)).setX(getPositionLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
             toggleModule.displayOnToggleState(c, "debugInfo", true);
-            toggleModule.displayOnToggleState(t, "debugInfo", true);
+            //toggleModule.displayOnToggleState(t, "debugInfo", true);
         }
 
         refereeMessage = g.createText("GO!").setAnchor(0.5)

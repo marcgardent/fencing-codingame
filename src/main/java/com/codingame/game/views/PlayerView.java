@@ -1,9 +1,11 @@
 package com.codingame.game.views;
 
 import com.codingame.game.Player;
-import com.codingame.game.models.ActionType;
 import com.codingame.game.models.PlayerModel;
-import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Group;
+import com.codingame.gameengine.module.entities.Line;
+import com.codingame.gameengine.module.entities.Rectangle;
 import com.codingame.gameengine.module.toggle.ToggleModule;
 import com.codingame.gameengine.module.tooltip.TooltipModule;
 import com.google.inject.Inject;
@@ -36,44 +38,27 @@ public class PlayerView {
     private PlayerModel playerModel;
     private Group character;
     private int color;
-    private Sprite attackFlag;
-    private Sprite knockoutFlag;
-    private Sprite energyFlag;
-    private Sprite defenceFlag;
 
 
     public PlayerView init(PlayerModel playerModel, Player player, char teamId) {
         this.playerModel = playerModel;
         animation.init(teamId);
         color = player.getColorToken();
-        int lungeDistance = StageView.getLogicToWorld(ActionType.LUNGE.distance);
-        int parryDistance = StageView.getLogicToWorld(ActionType.PARRY.distance);
+        int lungeDistance = StageView.getDistanceLogicToWorld(playerModel.getLungeDistance());
+        int parryDistance = StageView.getDistanceLogicToWorld(playerModel.getParryDistance());
 
-        attackFlag = g.createSprite().setImage("attack.png").setVisible(false)
-                .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
 
-        defenceFlag = g.createSprite().setImage("defence.png").setVisible(false)
-                .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
-
-        energyFlag = g.createSprite().setImage("energy.png").setVisible(false)
-                .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
-
-        knockoutFlag = g.createSprite().setImage("knockout.png").setVisible(false)
-                .setBaseHeight(FLAG_SIZE).setBaseWidth(FLAG_SIZE).setAnchor(0.5);
-
-        //TODO ADD SKILL
         Rectangle debug = g.createRectangle()
-                .setX(parryDistance).setY(-220).setWidth(-parryDistance + lungeDistance).setHeight(10).setAlpha(0.5)
-                .setZIndex(20).setFillColor(color);
-        Line debugP0 = g.createLine().setX(0).setY(0).setX2(0).setY2(-220).setLineWidth(2).setLineColor(color);
+                .setX(parryDistance).setY(-264).setWidth((-parryDistance) + lungeDistance).setHeight(260).setFillAlpha(0.1)
+                .setLineColor(color).setLineAlpha(1).setLineWidth(1)
+                .setZIndex(5).setFillColor(color);
+
+        Line debugP0 = g.createLine().setX(0).setY(10).setX2(0).setY2(-266).setLineWidth(1).setLineColor(color);
 
         toggleModule.displayOnToggleState(debug, "debugInfo", true);
         toggleModule.displayOnToggleState(debugP0, "debugInfo", true);
 
-        Group flags = g.createGroup(attackFlag, defenceFlag, energyFlag, knockoutFlag)
-                .setX(-25).setY(-220);
-
-        Group p = g.createGroup(flags, debug, debugP0);
+        Group p = g.createGroup(debug, debugP0);
         if (playerModel.orientation < 0) {
             p.setScaleX(playerModel.orientation);
         }
@@ -85,7 +70,7 @@ public class PlayerView {
 
     private void reset() {
         animation.toRespawn();
-        character.setX(StageView.getLogicToWorld(playerModel.position));
+        character.setX(StageView.getPositionLogicToWorld(playerModel.position));
         g.commitEntityState(1, character);
     }
 
@@ -100,12 +85,7 @@ public class PlayerView {
     }
 
     public void draw() {
-        //Reset
-        attackFlag.setVisible(false);
-        defenceFlag.setVisible(false);
-        energyFlag.setVisible(false);
-        knockoutFlag.setVisible(false);
-        g.commitEntityState(0, attackFlag, defenceFlag, energyFlag, knockoutFlag);
+
 
         StringBuilder sb = new StringBuilder();
         sb.append("position=").append(playerModel.position)
@@ -129,25 +109,19 @@ public class PlayerView {
     }
 
     public void playerKo() {
-        this.knockoutFlag.setVisible(true);
-        g.commitEntityState(0.00001, knockoutFlag);
     }
 
     public void energyChanged(int delta) {
         if (delta > 0) {
-            this.energyFlag.setVisible(true);
-            g.commitEntityState(0.00001, energyFlag);
             animation.toBreak();
         }
     }
 
     public void hit(boolean succeeded) {
-        g.commitEntityState(0.00001, attackFlag.setVisible(true).setAlpha(succeeded ? 1 : 0.5));
         animation.toLunge(succeeded);
     }
 
     public void defended(boolean succeeded) {
-        g.commitEntityState(0.00001, defenceFlag.setVisible(true).setAlpha(succeeded ? 1 : 0.5));
         animation.toParry(succeeded);
     }
 
@@ -157,6 +131,6 @@ public class PlayerView {
         } else {
             animation.toRetreat();
         }
-        g.commitEntityState(1, character.setX(StageView.getLogicToWorld(to)));
+        g.commitEntityState(1, character.setX(StageView.getPositionLogicToWorld(to)));
     }
 }

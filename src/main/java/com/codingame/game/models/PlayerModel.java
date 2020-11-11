@@ -62,6 +62,14 @@ public class PlayerModel {
         else return move.move;
     }
 
+    public int getParryDistance() {
+        return this.parryDistanceSkill + ActionType.PARRY.distance;
+    }
+
+    public int getLungeDistance() {
+        return this.lungeDistanceSkill + ActionType.LUNGE.distance;
+    }
+
     public void reset() {
         posture = ActionType.MIDDLE_POSTURE;
         touched = false;
