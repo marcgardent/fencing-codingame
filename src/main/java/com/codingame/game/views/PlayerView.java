@@ -42,9 +42,9 @@ public class PlayerView {
     private Sprite defenceFlag;
 
 
-    public PlayerView init(PlayerModel playerModel, Player player) {
+    public PlayerView init(PlayerModel playerModel, Player player, char teamId) {
         this.playerModel = playerModel;
-        animation.init('A');
+        animation.init(teamId);
         color = player.getColorToken();
         int lungeDistance = StageView.getLogicToWorld(ActionType.LUNGE.distance);
         int parryDistance = StageView.getLogicToWorld(ActionType.PARRY.distance);
@@ -73,12 +73,12 @@ public class PlayerView {
         Group flags = g.createGroup(attackFlag, defenceFlag, energyFlag, knockoutFlag)
                 .setX(-25).setY(-220);
 
-        Group p = g.createGroup(this.animation.getGroup(), flags, flags, debug, debugP0);
+        Group p = g.createGroup(flags, debug, debugP0);
         if (playerModel.orientation < 0) {
             p.setScaleX(playerModel.orientation);
         }
 
-        character = g.createGroup(p).setY((int) (StageView.LINE));
+        character = g.createGroup(this.animation.getGroup(), p).setY((int) (StageView.LINE));
         reset();
         return this;
     }
@@ -92,6 +92,11 @@ public class PlayerView {
     public void restartPlayer() {
         reset();
         draw();
+    }
+
+    public PlayerView setSpritePadding(int x) {
+        this.animation.getGroup().setX(x);
+        return this;
     }
 
     public void draw() {

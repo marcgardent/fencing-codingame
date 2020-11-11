@@ -29,7 +29,7 @@ public class TeamView {
         this.teamModel = teamState;
 
         this.color = player.getColorToken();
-        playerView.init(teamState.player, player);
+        playerView.init(teamState.player, player, teamState.teamId);
 
         Rectangle light = g.createRectangle()
                 .setWidth(StageView.HALF_WIDTH).setHeight(120)
@@ -65,6 +65,11 @@ public class TeamView {
         g.commitEntityState(1, this.score);
         this.energyBar.setWidth((int) (teamModel.player.energy / (double) teamModel.player.energyMax * ENERGY_BAR_SIZE));
         playerView.draw();
+    }
+
+    public TeamView setSpritePadding(int x) {
+        playerView.setSpritePadding(x);
+        return this;
     }
 
     public TeamView setPlayerBlock(int x, int y) {
