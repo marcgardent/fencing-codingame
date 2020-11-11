@@ -9,7 +9,7 @@ public enum ActionType {
     BREAK(0, 2, 0, 0, 0, 0),
     WALK(0, -1, 20, 0, 0, 0),
     RETREAT(0, -1, -20, 0, 0, 0),
-    LUNGE(0, -5, 0, 60, 0, 0),
+    LUNGE(0, -5, 0, 40, 0, 0),
     PARRY(0, -2, 0, -40, 0, 2),
 
     //Boss -> GA algorithm

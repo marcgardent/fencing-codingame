@@ -55,8 +55,8 @@ public class PlayerView {
 
         Line debugP0 = g.createLine().setX(0).setY(10).setX2(0).setY2(-266).setLineWidth(1).setLineColor(color);
 
-        toggleModule.displayOnToggleState(debug, "debugInfo", true);
-        toggleModule.displayOnToggleState(debugP0, "debugInfo", true);
+        toggleModule.displayOnToggleState(debug, "distances", true);
+        toggleModule.displayOnToggleState(debugP0, "distances", true);
 
         Group p = g.createGroup(debug, debugP0);
         if (playerModel.orientation < 0) {
@@ -85,8 +85,6 @@ public class PlayerView {
     }
 
     public void draw() {
-
-
         StringBuilder sb = new StringBuilder();
         sb.append("position=").append(playerModel.position)
                 .append("[").append(PlayerModel.MAX_POSITION - playerModel.position).append("]")

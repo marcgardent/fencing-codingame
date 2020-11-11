@@ -6,7 +6,12 @@ public class GameModel {
 
     public boolean restart = false;
 
-    public TeamModel teamA = new TeamModel('A');
+    public final TeamModel teamA;
 
-    public TeamModel teamB = new TeamModel('B');
+    public final TeamModel teamB;
+
+    GameModel(MatchObserver observer) {
+        teamA = new TeamModel(observer, 'A');
+        teamB = new TeamModel(observer, 'B');
+    }
 }

@@ -54,12 +54,15 @@ public class StageView {
         g.createRectangle()
                 .setWidth(WIDTH_RING).setHeight(60)
                 .setX(X_RING).setY(LINE - 30)
+                .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0)
                 .setFillColor(0xD44020).setZIndex(0);
+
         // lines
-        g.createRectangle()
-                .setWidth(WIDTH_RING).setHeight(60)
-                .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
-                .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
+        // g.createRectangle()
+        //    .setWidth(WIDTH_RING).setHeight(60)
+        //    .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
+        //    .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
+
         //spawn line
         int spanWidth = getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_B) - getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_A);
         g.createRectangle()
@@ -70,20 +73,45 @@ public class StageView {
         g.createSprite().setImage("logo-square.png").setAnchor(0.5)
                 .setX(HALF_WIDTH).setY(146).setBaseHeight(256).setBaseWidth(256).setAlpha(0.5);
 
-        //TODO remove DEBUG
         for (int i = 0; i <= 500; i += 20) {
             Circle c = g.createCircle().setRadius(5).setFillColor(Colors.WHITE).setX(getPositionLogicToWorld(i)).setY(600);
             //Text t = g.createText(Integer.toString(i)).setX(getPositionLogicToWorld(i)).setY(500).setFillColor(Colors.WHITE);
-            toggleModule.displayOnToggleState(c, "debugInfo", true);
+            toggleModule.displayOnToggleState(c, "distances", true);
             //toggleModule.displayOnToggleState(t, "debugInfo", true);
         }
+
+        int warnZone = getDistanceLogicToWorld(60);
+        //lines
+        g.createRectangle()
+                .setWidth(warnZone).setHeight(60)
+                .setX(X_RING).setY(LINE - 30)
+                .setAlpha(0.3).setLineWidth(5)
+                .setFillColor(Colors.BLACK)
+                .setLineColor(Colors.WHITE).setZIndex(0);
+
+        g.createRectangle()
+                .setWidth(warnZone).setHeight(60)
+                .setX(X_RING + WIDTH_RING - warnZone).setY(LINE - 30)
+                .setAlpha(0.3).setLineWidth(5)
+                .setFillColor(Colors.BLACK)
+                .setLineColor(Colors.WHITE).setZIndex(0);
+        // lines
+        g.createRectangle()
+                .setWidth(WIDTH_RING).setHeight(60)
+                .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
+                .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
+
+        g.createLine()
+                .setX(X_RING + (int) (WIDTH_RING / 2f)).setY(LINE - 30)
+                .setX2(X_RING + (int) (WIDTH_RING / 2f)).setY2(LINE + 30)
+                .setAlpha(0.3)
+                .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
 
         refereeMessage = g.createText("GO!").setAnchor(0.5)
                 .setFontWeight(Text.FontWeight.BOLD)
                 .setStrokeColor(Colors.BLACK).setStrokeThickness(8)
                 .setX(HALF_WIDTH).setY(200).setFontSize(100).setFillColor(Colors.WHITE).setAlpha(0.5);
         //.setStrokeColor(Colors.WHITE).setStrokeThickness(20);
-
         return this;
     }
 

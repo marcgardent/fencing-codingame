@@ -18,9 +18,9 @@ export const options = [
   ToggleModule.defineToggle({
     // The name of the toggle
     // replace "myToggle" by the name of the toggle you want to use
-    toggle: 'debugInfo',
+    toggle: 'distances',
     // The text displayed over the toggle
-    title: 'Debug Info',
+    title: 'Distances',
     // The labels for the on/off states of your toggle
     values: {
       'TOGGLED ON': true,
@@ -28,5 +28,19 @@ export const options = [
     },
     // Default value of your toggle
     default: false
-  })
+  }),
+  ToggleModule.defineToggle({
+        // The name of the toggle
+        // replace "myToggle" by the name of the toggle you want to use
+        toggle: 'variables',
+        // The text displayed over the toggle
+        title: 'Variables',
+        // The labels for the on/off states of your toggle
+        values: {
+          'TOGGLED ON': true,
+          'TOGGLED OFF': false
+        },
+        // Default value of your toggle
+        default: false
+      })
 ]

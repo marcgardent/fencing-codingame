@@ -2,8 +2,10 @@ package com.codingame.game.views;
 
 import com.codingame.game.Player;
 import com.codingame.game.models.ActionType;
+import com.codingame.game.models.PlayerModel;
 import com.codingame.game.models.TeamModel;
 import com.codingame.gameengine.module.entities.*;
+import com.codingame.gameengine.module.toggle.ToggleModule;
 import com.google.inject.Inject;
 
 public class TeamView {
@@ -14,6 +16,8 @@ public class TeamView {
     public PlayerView playerView;
     @Inject
     private GraphicEntityModule g;
+    @Inject
+    ToggleModule toggleModule;
     private TeamModel teamModel;
     private int color;
     private Text score;
@@ -23,6 +27,7 @@ public class TeamView {
     private int drugIndex;
     private Group drugSlots;
     private int drugOrientation;
+    private Text bioPassport;
 
 
     public TeamView init(TeamModel teamState, Player player) {
@@ -62,6 +67,7 @@ public class TeamView {
 
     public void draw() {
         this.score.setText(String.format("%1$2s", teamModel.score).replace(' ', '0'));
+        updateBioPassport();
         g.commitEntityState(1, this.score);
         this.energyBar.setWidth((int) (teamModel.player.energy / (double) teamModel.player.energyMax * ENERGY_BAR_SIZE));
         playerView.draw();
@@ -94,6 +100,38 @@ public class TeamView {
         drugSlots = g.createGroup().setX(x).setY(y);
         drugOrientation = orientation;
         return this;
+    }
+
+    public TeamView addBioPassport(int x, int y) {
+
+        bioPassport = g.createText("").setX(x).setY(y).setFillColor(Colors.WHITE).setFontSize(40);
+        updateBioPassport();
+        toggleModule.displayOnToggleState(bioPassport, "variables", true);
+
+        return this;
+    }
+
+    private void updateBioPassport() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("position: ").append(teamModel.player.position)
+                .append("[").append(PlayerModel.MAX_POSITION - teamModel.player.position).append("]")
+                .append("\n");
+        sb.append("energy: ").append(teamModel.player.energy).append("\n");
+        if (teamModel.player.energyMax > PlayerModel.ENERGY_MAX_SKILL)
+            sb.append("energyMax: ").append(teamModel.player.energyMax).append("\n");
+        if (teamModel.player.breakSkill > 0) sb.append("breakSkill: ").append(teamModel.player.breakSkill).append("\n");
+        if (teamModel.player.lungeDistanceSkill > 0)
+            sb.append("lungeDistanceSkill: ").append(teamModel.player.lungeDistanceSkill).append("\n");
+        if (teamModel.player.parryDistanceSkill > 0)
+            sb.append("parryDistanceSkill: ").append(teamModel.player.parryDistanceSkill).append("\n");
+        if (teamModel.player.walkSkill > 0) sb.append("walkSkill: ").append(teamModel.player.walkSkill).append("\n");
+        if (teamModel.player.doubleWalkSkill > 0)
+            sb.append("doubleWalkSkill: ").append(teamModel.player.doubleWalkSkill).append("\n");
+        if (teamModel.player.retreatSkill > 0)
+            sb.append("retreatSkill: ").append(teamModel.player.retreatSkill).append("\n");
+        if (teamModel.player.doubleRetreatSkill > 0)
+            sb.append("doubleRetreatSkill: ").append(teamModel.player.doubleRetreatSkill).append("\n");
+        bioPassport.setText(sb.toString());
     }
 
     void doped(ActionType a) {

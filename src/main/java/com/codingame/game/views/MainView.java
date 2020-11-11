@@ -35,15 +35,16 @@ public class MainView {
                 .addEnergyBarUI(StageView.HALF_WIDTH - (TeamView.ENERGY_BAR_SIZE + 20), StageView.LINE - 290)
                 .setPlayerBlock(0, StageView.LINE + 60)
                 .setSpritePadding(-205)
-                .addDrugSlot(StageView.HALF_WIDTH - 10, StageView.LINE + 60 + 130, -1);
-
+                .addDrugSlot(StageView.HALF_WIDTH - 10, StageView.LINE + 60 + 130, -1)
+                .addBioPassport(10, 10);
 
         bView.init(model.teamB, playerB)
                 .addScoreUI(StageView.HALF_WIDTH + 10, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH + 10, StageView.LINE - 290)
                 .setPlayerBlock(StageView.HALF_WIDTH, StageView.LINE + 60)
                 .setSpritePadding(-195)
-                .addDrugSlot(StageView.HALF_WIDTH + 10, StageView.LINE + 60 + 130, 1);
+                .addDrugSlot(StageView.HALF_WIDTH + 10, StageView.LINE + 60 + 130, 1)
+                .addBioPassport(StageView.WIDTH - 560, 10);
 
         viewByTeam.put(model.teamA, aView);
         viewByTeam.put(model.teamB, bView);

@@ -16,30 +16,28 @@ public class MatchModel {
     }
 
     private GameModel initGame() {
-        GameModel ret = new GameModel();
+        GameModel ret = new GameModel(observer);
         ret.tick = 0;
-        initTeam(ret.teamA, PlayerModel.SPAWN_POSITION_A, PlayerModel.LEFT_ORIENTATION);
-        initTeam(ret.teamB, PlayerModel.SPAWN_POSITION_B, PlayerModel.RIGHT_ORIENTATION);
+        ret.teamA.initTeam(PlayerModel.SPAWN_POSITION_A, PlayerModel.LEFT_ORIENTATION);
+        ret.teamB.initTeam(PlayerModel.SPAWN_POSITION_B, PlayerModel.RIGHT_ORIENTATION);
         return ret;
     }
 
     public GameModel tick(ActionType actionA, ActionType actionB) {
-        state.teamA.messages.clear();
-        state.teamB.messages.clear();
 
-        actionB = resolveEnergy(state.teamB, actionB);
-        actionA = resolveEnergy(state.teamA, actionA);
+        actionB = state.teamB.player.resolveEnergy(actionB);
+        actionA = state.teamA.player.resolveEnergy(actionA);
 
-        setDrug(state.teamA, actionA);
-        setDrug(state.teamB, actionB);
+        state.teamA.player.setDrugs(actionA);
+        state.teamB.player.setDrugs(actionB);
 
-        boolean legalMoveA = applyMove(state.teamA.player, actionA);
-        boolean legalMoveB = applyMove(state.teamB.player, actionB);
+        boolean legalMoveA = state.teamA.player.applyMove(actionA);
+        boolean legalMoveB = state.teamB.player.applyMove(actionB);
 
         if (legalMoveA && legalMoveB) {
             setPose(state.teamA, actionA);
             setPose(state.teamA, actionB);
-            resolveScore(actionA, actionB);
+            resolveScores(actionA, actionB);
         }
         if (!legalMoveA) {
             state.teamB.score += 1;
@@ -58,33 +56,6 @@ public class MatchModel {
 
         state.tick += 1;
         return state;
-    }
-
-    private void setDrug(TeamModel team, ActionType a) {
-        PlayerModel player = team.player;
-
-        if (a.drug > 0 && player.drugs.size() <= PlayerModel.DRUG_MAX) {
-            if (a == ActionType.PARRY_DRUG) {
-                player.parryDistanceSkill += a.drug;
-            } else if (a == ActionType.RETREAT_DRUG) {
-                player.retreatSkill += a.drug;
-            } else if (a == ActionType.DOUBLE_RETREAT_DRUG) {
-                player.doubleRetreatSkill += a.drug;
-            } else if (a == ActionType.WALK_DRUG) {
-                player.walkSkill += a.drug;
-            } else if (a == ActionType.DOUBLE_WALK_DRUG) {
-                player.doubleWalkSkill += a.drug;
-            } else if (a == ActionType.LUNGE_DRUG) {
-                player.lungeDistanceSkill += a.drug;
-            } else if (a == ActionType.ENERGY_MAX_DRUG) {
-                player.energyMax += a.drug;
-            } else if (a == ActionType.BREAK_DRUG) {
-                player.breakSkill += a.drug;
-            }
-
-            player.drugs.add(a);
-            observer.doped(player, a);
-        }
     }
 
     private void checkTheEnd() {
@@ -117,24 +88,7 @@ public class MatchModel {
         }
     }
 
-    private ActionType resolveEnergy(TeamModel team, ActionType action) {
-        int delta = action.energy + ((action == ActionType.BREAK) ? team.player.breakSkill : 0);
-        addEnergy(team.player, delta);
-
-        if (team.player.energy < 0) {
-            observer.playerTired(team.player);
-            //team.player.energy = 0;
-            team.messages.add(action.name() + " suppressed because of the KO");
-            return ActionType.SUPPRESS;
-        }
-        if (delta != 0) {
-            team.messages.add("energy " + (delta >= 0 ? "+" : "") + delta);
-        }
-
-        return action;
-    }
-
-    private void resolveScore(ActionType actionA, ActionType actionB) {
+    private void resolveScores(ActionType actionA, ActionType actionB) {
         state.teamA.player.touched = false;
         state.teamB.player.touched = false;
         if (actionA.distance > 0) {
@@ -167,21 +121,17 @@ public class MatchModel {
 
         if (defenseLength + offensiveLength >= PlayerModel.MAX_POSITION) {
             if (defenseAction.distance < 0) {
-                defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " failed");
                 observer.defended(defender.player, false);
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveDistance + ")" + " touched");
             observer.hit(striker.player, true);
 
             return true;
         } else {
             if (defenseAction.distance < 0) {
-                defender.messages.add(defenseAction.name() + "(" + defenseDistance + ")" + " succeeded");
                 observer.defended(defender.player, true);
-                addEnergy(defender.player, defenseAction.energyTransfer);
-                addEnergy(striker.player, -defenseAction.energyTransfer);
+                defender.player.addEnergy(defenseAction.energyTransfer);
+                striker.player.addEnergy(-defenseAction.energyTransfer);
             }
-            striker.messages.add(offensiveAction.name() + "(" + offensiveDistance + ")" + " failed");
             observer.hit(striker.player, false);
 
             return false;
@@ -190,46 +140,8 @@ public class MatchModel {
 
     private void setPose(TeamModel team, ActionType action) {
         if (action == ActionType.LEFT_POSTURE || action == ActionType.RIGHT_POSTURE || action == ActionType.MIDDLE_POSTURE) {
-            if (action != team.player.posture) team.messages.add("posture changed:" + action.name());
-            else team.messages.add("posture ignored:" + action.name());
             team.player.posture = action;
         }
-    }
-
-    private boolean applyMove(PlayerModel player, ActionType action) {
-        boolean ret = true;
-        if (action.move != 0) {
-            int move = player.getMove(action);
-            if (move != 0) {
-                int p = player.position + player.orientation * move;
-                if (p < PlayerModel.MIN_POSITION || p > PlayerModel.MAX_POSITION) {
-                    observer.outside(player);
-                    ret = false;
-                }
-                p = Math.max(p, PlayerModel.MIN_POSITION);
-                p = Math.min(p, PlayerModel.MAX_POSITION);
-
-                observer.move(player, player.position, p);
-                player.position = p;
-            }
-        }
-        return ret;
-    }
-
-    private void addEnergy(PlayerModel player, int delta) {
-        byte total = (byte) Math.min(player.energy + delta, player.energyMax);
-        if (total != player.energy) {
-            observer.energyChanged(player, delta);
-            player.energy = total;
-        }
-    }
-
-    private void initTeam(TeamModel team, int spawn, int orientation) {
-        team.score = 0;
-        team.player.energy = PlayerModel.ENERGY_START;
-        team.player.position = spawn;
-        team.player.orientation = orientation;
-        team.player.reset();
     }
 
     public GameModel restart() {

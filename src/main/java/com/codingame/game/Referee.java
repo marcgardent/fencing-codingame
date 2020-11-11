@@ -46,7 +46,7 @@ public class Referee extends AbstractReferee implements MatchObserver {
 
         view.init(state, playerA, playerB);
 
-        gameManager.setFrameDuration(200);
+        gameManager.setFrameDuration(400);
         gameManager.setMaxTurns(MatchModel.MAX_TICK / 2);
     }
 
@@ -84,10 +84,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
             } else {
                 state = match.tick(A, B);
                 view.tick();
-
-                String msgA = String.join(", ", state.teamA.messages);
-                String msgB = String.join(", ", state.teamB.messages);
-
             }
         }
     }
@@ -123,16 +119,10 @@ public class Referee extends AbstractReferee implements MatchObserver {
         Player playerA = gameManager.getPlayer(0);
         Player playerB = gameManager.getPlayer(1);
 
-        boolean nonCombativityPenality =
-                playerB.isActive() && playerA.isActive() &&
-                        state.teamA.score == 0 && state.teamB.score == 0 &&
-                        state.teamA.player.energy >= 0 && state.teamB.player.energy >= 0;
+        ScoreModel scores = new ScoreModel(state, playerA.isActive(), playerB.isActive());
 
-        boolean penalityA = nonCombativityPenality || !playerA.isActive() || state.teamA.player.energy < 0;
-        boolean penalityB = nonCombativityPenality || !playerB.isActive() || state.teamA.player.energy < 0;
-
-        playerA.setScore(!penalityA ? (state.teamA.score - state.teamB.score) : -20);
-        playerB.setScore(!penalityB ? (state.teamB.score - state.teamA.score) : -20);
+        playerA.setScore(scores.teamA);
+        playerB.setScore(scores.teamB);
 
         gameManager.addToGameSummary(GameManager.formatSuccessMessage(
                 "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
