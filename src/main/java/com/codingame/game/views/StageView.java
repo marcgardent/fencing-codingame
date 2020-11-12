@@ -112,6 +112,10 @@ public class StageView {
                 .setStrokeColor(Colors.BLACK).setStrokeThickness(8)
                 .setX(HALF_WIDTH).setY(200).setFontSize(100).setFillColor(Colors.WHITE).setAlpha(0.5);
         //.setStrokeColor(Colors.WHITE).setStrokeThickness(20);
+
+        g.createSprite().setImage("filter.png").setAlpha(0.1).setX(0).setY(0).setZIndex(50);
+        //.setBlendMode(BlendableEntity.BlendMode.MULTIPLY);
+
         return this;
     }
 
