@@ -3,6 +3,7 @@ package com.codingame.game.views;
 import com.codingame.game.models.PlayerModel;
 import com.codingame.gameengine.module.entities.Circle;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Polygon;
 import com.codingame.gameengine.module.entities.Text;
 import com.codingame.gameengine.module.toggle.ToggleModule;
 import com.google.inject.Inject;
@@ -27,6 +28,8 @@ public class StageView {
     private Text refereeMessage;
 
     private final List<String> messages = new LinkedList<>();
+    private Polygon lightA;
+    private Polygon lightB;
 
     public static int getDistanceLogicToWorld(int v) {
         return (int) ((float) v / (float) (PlayerModel.MAX_POSITION - PlayerModel.MIN_POSITION)
@@ -37,12 +40,26 @@ public class StageView {
         return getDistanceLogicToWorld(v) + X_RING;
     }
 
+    private Polygon setLines(int orientation) {
+        return g.createPolygon()
+                .addPoint(orientation < 0 ? StageView.WIDTH : 0, 100)
+                .addPoint(orientation < 0 ? StageView.WIDTH : 0, 120)
+                .addPoint(StageView.HALF_WIDTH - orientation * 100, StageView.LINE - 200)
+                .setFillColor(Colors.COLOR_OFF).setZIndex(0);
+    }
 
     public StageView init() {
         g.createRectangle()
                 .setWidth(WIDTH).setHeight(HEIGHT)
                 .setX(0).setY(0)
                 .setFillColor(Colors.BLACK).setZIndex(0);
+
+        g.createSprite().setImage("light.png").setY(LINE + 190).setAlpha(0.1);
+        ;
+        g.createSprite().setImage("light.png").setY(LINE - 200).setAlpha(0.1);
+
+        lightA = setLines(1);
+        lightB = setLines(-1);
 
         //blue floor
         g.createRectangle()
@@ -132,5 +149,13 @@ public class StageView {
             g.commitEntityState(0, refereeMessage);
             messages.clear();
         }
+    }
+
+    public Polygon getLightA() {
+        return lightA;
+    }
+
+    public Polygon getLightB() {
+        return lightB;
     }
 }

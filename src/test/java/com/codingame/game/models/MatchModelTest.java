@@ -63,7 +63,6 @@ public class MatchModelTest {
         assertFalse(model.restart, "restarted");
         assertEquals(0, left.score, "score L +0");
         assertEquals(0, right.score, "score R +0");
-
     }
 
     @CartesianProductTest
@@ -133,5 +132,4 @@ public class MatchModelTest {
         assertEquals(drug.drug * 2, left.player.lungeDistanceSkill);
         assertEquals(0, right.player.lungeDistanceSkill);
     }
-
 }

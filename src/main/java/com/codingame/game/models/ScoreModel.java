@@ -11,9 +11,10 @@ public class ScoreModel {
                         state.teamA.player.energy >= 0 && state.teamB.player.energy >= 0;
 
         boolean penalityA = nonCombativityPenality || !isActiveA || state.teamA.player.energy < 0;
-        boolean penalityB = nonCombativityPenality || !isActiveB || state.teamA.player.energy < 0;
-
-        teamA = (!penalityA ? (state.teamA.score - state.teamB.score) : -20);
-        teamB = (!penalityB ? (state.teamB.score - state.teamA.score) : -20);
+        boolean penalityB = nonCombativityPenality || !isActiveB || state.teamB.player.energy < 0;
+        int pointA = (state.teamA.score > state.teamB.score) || penalityB ? 1 : 0;
+        int pointB = (state.teamA.score < state.teamB.score) || penalityA ? 1 : 0;
+        teamA = (!penalityA ? pointA : -1);
+        teamB = (!penalityB ? pointB : -1);
     }
 }

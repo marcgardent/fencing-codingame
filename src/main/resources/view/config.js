@@ -3,8 +3,8 @@ import { TooltipModule } from './tooltip-module/TooltipModule.js';
 import { ToggleModule } from './toggle-module/ToggleModule.js'
 
 export const playerColors = [
-  '#49cc35', // green
-  '#ff0000' // red
+  '#ff0000',
+  '#49cc35'
 ];
 
 export const modules = [

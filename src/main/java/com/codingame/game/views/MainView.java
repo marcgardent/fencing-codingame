@@ -31,6 +31,7 @@ public class MainView {
         this.model = model;
         stage.init();
         aView.init(model.teamA, playerA)
+                .setLight(stage.getLightA())
                 .addScoreUI(StageView.HALF_WIDTH - 110, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH - (TeamView.ENERGY_BAR_SIZE + 20), StageView.LINE - 290)
                 .setPlayerBlock(0, StageView.LINE + 60)
@@ -39,6 +40,7 @@ public class MainView {
                 .addBioPassport(10, 10);
 
         bView.init(model.teamB, playerB)
+                .setLight(stage.getLightB())
                 .addScoreUI(StageView.HALF_WIDTH + 10, StageView.LINE - 400)
                 .addEnergyBarUI(StageView.HALF_WIDTH + 10, StageView.LINE - 290)
                 .setPlayerBlock(StageView.HALF_WIDTH, StageView.LINE + 60)

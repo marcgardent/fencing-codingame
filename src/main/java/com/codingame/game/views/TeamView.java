@@ -28,6 +28,7 @@ public class TeamView {
     private Group drugSlots;
     private int drugOrientation;
     private Text bioPassport;
+    private Polygon light;
 
 
     public TeamView init(TeamModel teamState, Player player) {
@@ -61,7 +62,8 @@ public class TeamView {
 
     public void restart() {
         this.playerBlock.setAlpha(0.5);
-        g.commitEntityState(1, this.playerBlock);
+        this.light.setAlpha(0.1);
+        g.commitEntityState(1, this.playerBlock, this.light);
         playerView.restartPlayer();
     }
 
@@ -135,7 +137,7 @@ public class TeamView {
     }
 
     void doped(ActionType a) {
-        Sprite s = g.createSprite().setImage("drugs/" + a.name() + ".png")
+        Sprite s = g.createSprite().setImage(a.name())
                 .setX(drugOrientation * drugIndex * CARD_SIZE - ((drugOrientation < 0) ? CARD_SIZE : 0))
                 .setBaseWidth(256).setBaseHeight(356).setY(0).setScale((double) CARD_SIZE / (double) 256);
         drugSlots.add(s);
@@ -160,15 +162,25 @@ public class TeamView {
 
     public void scored() {
         this.playerBlock.setAlpha(0.2);
-        g.commitEntityState(0.25, this.playerBlock);
+        this.light.setAlpha(0.2);
+        g.commitEntityState(0.25, this.playerBlock, this.light);
 
         this.playerBlock.setAlpha(1);
-        g.commitEntityState(0.5, this.playerBlock);
+        this.light.setAlpha(1);
+        g.commitEntityState(0.5, this.playerBlock, this.light);
 
         this.playerBlock.setAlpha(0.2);
-        g.commitEntityState(0.75, this.playerBlock);
+        this.light.setAlpha(0.2);
+        g.commitEntityState(0.75, this.playerBlock, this.light);
 
         this.playerBlock.setAlpha(1);
-        g.commitEntityState(1, this.playerBlock);
+        this.light.setAlpha(1);
+        g.commitEntityState(1, this.playerBlock, this.light);
+    }
+
+    public TeamView setLight(Polygon light) {
+        this.light = light;
+        light.setFillColor(color).setAlpha(0);
+        return this;
     }
 }

@@ -27,8 +27,8 @@ class ScoreModelTest {
         game.teamA.score = score;
         game.teamB.score = score;
         ScoreModel target = new ScoreModel(game, AB, !AB);
-        assertEquals(AB ? 0 : -20, target.teamA);
-        assertEquals(!AB ? 0 : -20, target.teamB);
+        assertEquals(AB ? 1 : -1, target.teamA);
+        assertEquals(!AB ? 1 : -1, target.teamB);
     }
 
     @CartesianProductTest
@@ -39,8 +39,8 @@ class ScoreModelTest {
         game.teamA.score = score + (AB ? 1 : 0);
         game.teamB.score = score + (!AB ? 1 : 0);
         ScoreModel target = new ScoreModel(game, AB, !AB);
-        assertEquals(AB ? 1 : -20, target.teamA);
-        assertEquals(!AB ? 1 : -20, target.teamB);
+        assertEquals(AB ? 1 : -1, target.teamA);
+        assertEquals(!AB ? 1 : -1, target.teamB);
     }
 
     @CartesianProductTest
@@ -51,8 +51,8 @@ class ScoreModelTest {
         game.teamA.score = score - (AB ? 1 : 0);
         game.teamB.score = score - (!AB ? 1 : 0);
         ScoreModel target = new ScoreModel(game, AB, !AB);
-        assertEquals(AB ? -1 : -20, target.teamA);
-        assertEquals(!AB ? -1 : -20, target.teamB);
+        assertEquals(AB ? 1 : -1, target.teamA);
+        assertEquals(!AB ? 1 : -1, target.teamB);
     }
 
     @Test
@@ -61,8 +61,8 @@ class ScoreModelTest {
         game.teamA.score = 0;
         game.teamB.score = 0;
         ScoreModel target = new ScoreModel(game, true, true);
-        assertEquals(-20, target.teamA);
-        assertEquals(-20, target.teamB);
+        assertEquals(-1, target.teamA);
+        assertEquals(-1, target.teamB);
     }
 
     @CartesianProductTest
@@ -76,8 +76,8 @@ class ScoreModelTest {
         game.teamA.player.energy = (AB ? -1 : 0);
         game.teamB.player.energy = (!AB ? -1 : 0);
         ScoreModel target = new ScoreModel(game, true, true);
-        assertEquals(AB ? -20 : 20, target.teamA);
-        assertEquals(!AB ? -20 : 20, target.teamB);
+        assertEquals(AB ? -1 : 1, target.teamA);
+        assertEquals(!AB ? -1 : 1, target.teamB);
     }
 }
 
