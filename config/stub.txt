@@ -12,15 +12,15 @@ INPUT
 position: range [0,500], step 50, init(you:200, opponent:300)
 energy: range [0,20] init 20
 score: range [0,20] init 0
-drugCount: not used until league 3
-energyMax: not used until league 3
-breakSkill: not used until league 3
-walkSkill: not used until league 3
-doubleWalkSkill: not used until league 3
-retreatSkill: not used until league 3
-doubleRetreatSkill: not used until league 3
-lungeDistanceSkill: not used until league 3
-parryDistanceSkill: not used until league 3
+drugCount: not used until league 3 - number of drugs consumed, range [0,7], init(0)
+energyMax: not used until league 3 -  increased by ENERGY_MAX_DRUG, init(20)
+breakSkill: not used until league 3 - increase your recovery; added to break's energy; increased by BREAK_DRUG, init(0)
+walkSkill: not used until league 3 - added to walk's move; increased by WALK_DRUG, init(0)
+doubleWalkSkill: not used until league 3 - added to double walk's move;increased by DOUBLE_WALK_DRUG, init(0)
+retreatSkill: not used until league 3 - added to retreat's move; increased by RETREAT_DRUG, init(0)
+doubleRetreatSkill: not used until league 3 - added to double retreat's move; increased by DOUBLE_RETREAT_DRUG, init(0)
+lungeDistanceSkill: not used until league 3 - added to the lunge's distance;increased by LUNGE_DRUG, init(0)
+parryDistanceSkill: not used until league 3 - added to the parry's distance;increased by PARRY_DRUG, init(0)
 
 OUTPUT
 <action>
