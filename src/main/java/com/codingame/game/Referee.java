@@ -69,18 +69,8 @@ public class Referee extends AbstractReferee implements MatchObserver {
             ActionType A = playerTurn(playerA, state.teamA, state.teamB);
             ActionType B = playerTurn(playerB, state.teamB, state.teamA);
 
-            if (A == null && B == null) {
-                playerA.setScore(-20);
-                playerB.setScore(-20);
-                endGame();
-            } else if (A == null) {
-                playerA.setScore(-20);
-                playerB.setScore(20);
-                endGame();
-            } else if (B == null) {
-                playerA.setScore(20);
-                playerB.setScore(-20);
-                endGame();
+            if (A == null || B == null) {
+                gameManager.endGame();
             } else {
                 state = match.tick(A, B);
                 view.tick();
@@ -107,28 +97,6 @@ public class Referee extends AbstractReferee implements MatchObserver {
         return null;
     }
 
-    private void endGame() {
-        setScore();
-        gameManager.endGame();
-    }
-
-    private void setScore() {
-
-        //TODO UNIT TEST
-
-        Player playerA = gameManager.getPlayer(0);
-        Player playerB = gameManager.getPlayer(1);
-
-        ScoreModel scores = new ScoreModel(state, playerA.isActive(), playerB.isActive());
-
-        playerA.setScore(scores.teamA);
-        playerB.setScore(scores.teamB);
-
-        gameManager.addToGameSummary(GameManager.formatSuccessMessage(
-                "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
-                        + playerB.getNicknameToken() + "(" + playerB.getScore() + ")"
-        ));
-    }
 
     @Override
     public void playerTired(PlayerModel player) {
@@ -151,20 +119,30 @@ public class Referee extends AbstractReferee implements MatchObserver {
     }
 
     @Override
-    public void winTheGame() {
-        endGame();
+    public void onEnd() {
+
+        Player playerA = gameManager.getPlayer(0);
+        Player playerB = gameManager.getPlayer(1);
+
+        ScoreModel scores = new ScoreModel(state, playerA.isActive(), playerB.isActive());
+
+        playerA.setScore(scores.teamA);
+        playerB.setScore(scores.teamB);
+
+        gameManager.addToGameSummary(GameManager.formatSuccessMessage(
+                "Final result: " + playerA.getNicknameToken() + "(" + playerA.getScore() + "), "
+                        + playerB.getNicknameToken() + "(" + playerB.getScore() + ")"
+        ));
     }
 
     @Override
-    public void onEnd() {
-        setScore();
+    public void winTheGame() {
+        gameManager.endGame();
     }
 
     @Override
     public void draw() {
-        gameManager.addToGameSummary("Draw!");
-
-        endGame();
+        gameManager.endGame();
     }
 
     @Override
@@ -242,5 +220,4 @@ public class Referee extends AbstractReferee implements MatchObserver {
             System.out.print(b.toString());
         }
     }
-
 }

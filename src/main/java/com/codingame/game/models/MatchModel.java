@@ -60,11 +60,11 @@ public class MatchModel {
 
     private void checkTheEnd() {
         boolean timeout = state.tick >= MatchModel.MAX_TICK;
-        if (state.teamA.player.energy < 0 && state.teamB.player.energy < 0) {
+        if ((state.teamA.player.energy < 0 && state.teamB.player.energy < 0) || (state.teamA.player.isCheater && state.teamB.player.isCheater)) {
             observer.draw();
-        } else if (state.teamA.player.energy < 0) {
+        } else if (state.teamA.player.energy < 0 || state.teamA.player.isCheater) {
             observer.winTheGame();
-        } else if (state.teamB.player.energy < 0) {
+        } else if (state.teamB.player.energy < 0 || state.teamB.player.isCheater) {
             observer.winTheGame();
         } else if (state.teamA.score >= TeamModel.SCORE_MAX && state.teamA.score - state.teamB.score >= TeamModel.SCORE_GAP) {
             observer.winTheGame();

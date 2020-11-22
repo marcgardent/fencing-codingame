@@ -39,6 +39,7 @@ public class PlayerModel {
     public boolean touched = false;
 
     public ArrayList<ActionType> drugs = new ArrayList<ActionType>();
+    public boolean isCheater;
 
     public PlayerModel(MatchObserver observer) {
 
@@ -82,7 +83,7 @@ public class PlayerModel {
     }
 
     public void setDrugs(ActionType a) {
-        if (a.drug > 0 && drugs.size() <= PlayerModel.DRUG_MAX) {
+        if (a.drug > 0 && drugs.size() < PlayerModel.DRUG_MAX) {
             if (a == ActionType.PARRY_DRUG) {
                 parryDistanceSkill += a.drug;
             } else if (a == ActionType.RETREAT_DRUG) {
@@ -103,6 +104,8 @@ public class PlayerModel {
 
             drugs.add(a);
             observer.doped(this, a);
+        } else if (a.drug > 0) {
+            this.isCheater = true;
         }
     }
 
