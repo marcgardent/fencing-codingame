@@ -117,33 +117,7 @@ public class MatchModel {
                 ? defenseAction.distance + defender.player.parryDistanceSkill : 0;
         int offensiveDistance = offensiveAction.distance + striker.player.lungeDistanceSkill;
         int playersDistance = Math.abs(striker.player.position - defender.player.position);
-
         if (playersDistance <= offensiveDistance + defenseDistance) {
-            if (defenseAction.distance < 0) {
-                observer.defended(defender.player, false);
-            }
-            observer.hit(striker.player, true);
-
-            return true;
-        } else {
-            if (defenseAction.distance < 0) {
-                observer.defended(defender.player, true);
-                defender.player.addEnergy(defenseAction.energyTransfer);
-                striker.player.addEnergy(-defenseAction.energyTransfer);
-            }
-            observer.hit(striker.player, false);
-            return false;
-        }
-    }
-
-    private boolean isTouched2(TeamModel striker, ActionType offensiveAction, TeamModel defender, ActionType defenseAction) {
-        int defenseDistance = (state.teamA.player.posture == state.teamB.player.posture && defenseAction.distance < 0)
-                ? defenseAction.distance + defender.player.parryDistanceSkill : 0;
-        int offensiveDistance = offensiveAction.distance + striker.player.lungeDistanceSkill;
-        int defenseLength = defender.player.getRelativePosition() + defenseDistance;
-        int offensiveLength = striker.player.getRelativePosition() + offensiveDistance;
-
-        if (defenseLength + offensiveLength >= PlayerModel.MAX_POSITION) {
             if (defenseAction.distance < 0) {
                 observer.defended(defender.player, false);
             }

@@ -183,7 +183,7 @@
                         <const>500</const>
                         ].
                     </li>
-                    <li>distance: positive is an attack; negative is a defense; see §Assault.</li>
+                    <li>distance: positive is an attack; negative is a defense; see &sect;Assault.</li>
                     <li>energyTransfer: transfer the quantity from your opponent to you.</li>
                 </ul>
                 <ul>
@@ -220,19 +220,18 @@
                 <p>
                     <br>Assault resolution depends on the positions and distances of the actions:
                 </p>
-                <div style='background-color:#444;font-family:monospace;padding:1em'>
-                    <p>isTouchedWhenLungeParry(strikerPosition:int, defenderPosition:int) -> (defender +
-                        parryDistance)
-                        + (striker + lungeDistance) >= 500;</p>
-                    <p>isTouchedWhenLunge(strikerPosition:int, defenderPosition:int) -> (defender) + (striker +
-                        LungeDistance) >= 500;</p>
+                <div style='background-color:#555;color:white;font-family:monospace;padding:1em'>
+                    <p>isTouchedWhenLunge(striker:Player, defender:Player) ->
+                        Abs(striker.position - defender.position) >= striker.lungeDistance;
+                    </p>
+                    <p>isTouchedWhenLungeParry(striker:Player, defender:Player) ->
+                        Abs(striker.position - defender.position) >= striker.lungeDistance + defender.parryDistance;</p>
                 </div>
 
-                <p>to use it, Normalize the position of your opponent, two sample bellow:</p>
-                <div style='background-color:#444;font-family:monospace;padding:1em'>
-                    <p>opponentPositionNormalized = (500 - opponent.position)</p>
-                    <p>IAttackOpponentDefend = isTouchedWhenAttackDefense(my.Position, opponentPositionNormalized)</p>
-                    <p>opponentAttack = isTouchedWhenAttack(opponentPositionNormalized, my.position)</p>
+                <p>to use it, two samples bellow:</p>
+                <div style='background-color:#555;color:white;font-family:monospace;padding:1em'>
+                    <p>ILungeAndOpponentDefends = isTouchedWhenLungeParry(me, opponent)</p>
+                    <p>OpponentLunges = isTouchedWhenLunge(opponent, me)</p>
                 </div>
             </div>
         </div>
@@ -250,6 +249,7 @@
                 <span class="statement-lineno">Line 1, my data:</span>
                 <var>position</var>&nbsp;<var>energy</var>&nbsp;<var>score</var>&nbsp;<var>drugCount</var>&nbsp;<var>energyMax</var>&nbsp;<var>breakSkill</var>&nbsp;<var>walkSkill</var>&nbsp;<var>doubleWalkSkill</var>&nbsp;<var>retreatSkill</var>&nbsp;<var>doubleRetreatSkill</var>&nbsp;<var>lungeDistanceSkill</var>&nbsp;<var>parryDistanceSkill</var>
             </div>
+            <br/>
             <div class="text">
                 <span class="statement-lineno">Line 2, opponent data:</span>
                 <var>position</var>&nbsp;<var>energy</var>&nbsp;<var>score</var>&nbsp;<var>drugCount</var>&nbsp;<var>energyMax</var>&nbsp;<var>breakSkill</var>&nbsp;<var>walkSkill</var>&nbsp;<var>doubleWalkSkill</var>&nbsp;<var>retreatSkill</var>&nbsp;<var>doubleRetreatSkill</var>&nbsp;<var>lungeDistanceSkill</var>&nbsp;<var>parryDistanceSkill</var>
@@ -282,35 +282,6 @@
                         <const>+&infin;</const>
                         [, init
                         <const>0</const>
-                    </li>
-                </ul>
-                <ul>
-                    <li>
-                        <var>drugCount</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>energyMax</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>breakSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>walkSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>doubleWalkSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>retreatSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>doubleRetreatSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>lungeDistanceSkill</var>: not used until league 3
-                    </li>
-                    <li>
-                        <var>parryDistanceSkill</var>: not used until league 3
                     </li>
                 </ul>
                 <ul>
@@ -482,7 +453,6 @@
             </div>
         </div>
     </div>
-
     <div class="statement-section statement-rules">
         <h2><span class="icon icon-rules">&nbsp;</span><span>Raw Data</span></h2>
         <table class="marked">
@@ -946,7 +916,7 @@
                 <td>3</td>
             </tr>
         </table>
-        <h2>Call to action!</h2>
+        <h2>Final word!</h2>
         <p><b>Give your feedback and vote to encourage the author! Enjoy your games!</b></p>
     </div>
 </div>
