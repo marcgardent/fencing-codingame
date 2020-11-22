@@ -3,8 +3,6 @@ namespace CodeInGame
 {
     using System.IO;
     using System.Text;
-
-
     public interface ILogger
     {
         void Log(string line);
