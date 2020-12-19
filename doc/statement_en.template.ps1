@@ -284,6 +284,13 @@ newSection -league 3 -content "
                     </li>
                 </ul>
                 <h3>Assaults</h3>
+                "
+                if($LEAGUE3){
+                "<div class='statement-summary-new-league-rules'>
+                        <p>Don't forget! change the formula to handle <var>lungeDistanceSkill</var> and <var>parryDistanceSkill</var>..</p>
+                    </div>"
+                }
+                "
                 <p>
                     <br>Assault resolution depends on the positions and distances of the actions:
                 </p>
