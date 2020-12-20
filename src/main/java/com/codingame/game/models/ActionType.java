@@ -11,6 +11,7 @@ public enum ActionType {
     RETREAT(0, -1, -20, 0, 0, 0),
     LUNGE(0, -5, 0, 40, 0, 0),
     PARRY(0, -2, 0, -40, 0, 2),
+
     //Boss -> GA algorithm
     //League 1
     MIDDLE_POSTURE(Integer.MAX_VALUE, -1, 0, 0, 0, 0),

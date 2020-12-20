@@ -41,6 +41,7 @@ public class StageView {
     }
 
     private Polygon setLines(int orientation) {
+
         return g.createPolygon()
                 .addPoint(orientation < 0 ? StageView.WIDTH : 0, 100)
                 .addPoint(orientation < 0 ? StageView.WIDTH : 0, 120)
@@ -73,12 +74,6 @@ public class StageView {
                 .setX(X_RING).setY(LINE - 30)
                 .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0)
                 .setFillColor(0xD44020).setZIndex(0);
-
-        // lines
-        // g.createRectangle()
-        //    .setWidth(WIDTH_RING).setHeight(60)
-        //    .setX(X_RING).setY(LINE - 30).setFillAlpha(0)
-        //    .setLineColor(Colors.WHITE).setLineWidth(5).setZIndex(0);
 
         //spawn line
         int spanWidth = getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_B) - getDistanceLogicToWorld(PlayerModel.SPAWN_POSITION_A);

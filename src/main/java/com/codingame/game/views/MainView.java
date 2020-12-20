@@ -28,6 +28,7 @@ public class MainView {
     private GameModel model;
 
     public void init(GameModel model, Player playerA, Player playerB) {
+
         this.model = model;
         stage.init();
         aView.init(model.teamA, playerA)

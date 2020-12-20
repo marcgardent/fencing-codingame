@@ -39,7 +39,6 @@ public class PlayerView {
     private Group character;
     private int color;
 
-
     public PlayerView init(PlayerModel playerModel, Player player, char teamId) {
         this.playerModel = playerModel;
         animation.init(teamId);
